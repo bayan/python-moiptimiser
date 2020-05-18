@@ -29,10 +29,7 @@ class MOIPtimiser:
     def __find_non_dominated_objective_vectors(self, depth):
         if depth == 1:
             self.__model.optimize()
-            if self.__is_infeasible():
-                return []
-            else:
-                return [self.__current_nd()]
+            return [] if self.__is_infeasible() else [self.__current_nd()]
         else:
             nds = []
             self.__objective_constraints[-depth].rhs = gurobipy.GRB.INFINITY
