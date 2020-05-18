@@ -38,7 +38,7 @@ class MOIPtimiser:
             return set() if self.__is_infeasible() else {self.__current_nd()}
         else:
             nds = set()
-            self.__objective_constraints[-depth].rhs = gurobipy.GRB.INFINITY
+            self.__objective_constraints[depth-1].rhs = gurobipy.GRB.INFINITY
             while True:
                 new_nds = self.__find_non_dominated_objective_vectors(depth-1)
                 if len(new_nds) == 0: return nds
