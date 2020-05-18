@@ -26,7 +26,7 @@ class MOIPtimiser:
             nd.append(int(self.__model.ObjNVal))
         return tuple(nd)
 
-    def __current_upper_bounds(self):
+    def __current_bounds(self):
         bounds = []
         for i in range(self.__model.NumObj):
             bounds.append(self.__objective_constraints[i].rhs)
