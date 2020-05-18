@@ -10,4 +10,5 @@ class MOIPtimiser:
 
     def from_lp_file(filepath):
         model = gurobipy.read(filepath)
+        model.Params.OutputFlag = 0 # Suppress console output
         return MOIPtimiser(model)
