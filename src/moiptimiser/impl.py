@@ -35,14 +35,14 @@ class MOIPtimiser:
     def __find_non_dominated_objective_vectors(self, depth):
         if depth == 1:
             self.__model.optimize()
-            return [] if self.__is_infeasible() else [self.__current_nd()]
+            return set() if self.__is_infeasible() else {self.__current_nd()}
         else:
-            nds = []
+            nds = set()
             self.__objective_constraints[-depth].rhs = gurobipy.GRB.INFINITY
             while True:
                 new_nds = self.__find_non_dominated_objective_vectors(depth-1)
                 if len(new_nds) == 0: return nds
-                nds = nds + new_nds
+                nds = nds.union(new_nds)
                 new_bound = max([ nd[depth-1] for nd in new_nds ]) - 1
                 self.__objective_constraints[depth-1].rhs = new_bound
 
