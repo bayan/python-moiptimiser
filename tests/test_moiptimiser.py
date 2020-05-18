@@ -9,7 +9,6 @@ def test_main():
     result = runner.invoke(main, ['tests/examples/2AP05.lp'])
 
     assert '(50, 24)' in result.output
-    assert '(50, 24)' in result.output
     assert '(39, 28)' in result.output
     assert '(34, 29)' in result.output
     assert '(31, 30)' in result.output
