@@ -6,7 +6,12 @@ class MOIPtimiser:
         self.model = model
 
     def find_non_dominated_objective_vectors(self):
-        return [(50,24),(39,28),(34,29),(31,30),(30,31),(27,36),(24,45),(23,46),(21,55)]
+        self.model.optimize()
+        solution = []
+        for i in range(self.model.NumObj):
+            self.model.params.ObjNumber = i
+            solution.append(self.model.ObjNVal)
+        return [tuple(solution)]
 
     def from_lp_file(filepath):
         model = gurobipy.read(filepath)
