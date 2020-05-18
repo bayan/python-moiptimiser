@@ -16,8 +16,11 @@ Why does this file exist, and why not put this in __main__?
 """
 import click
 
+from moiptimiser.impl import MOIPtimiser
 
-@click.command()
-@click.argument('names', nargs=-1)
-def main(names):
-    click.echo(repr(names))
+@click.command(help='FILEPATH points to a multi-objective linear programming file using the LP format')
+@click.argument('filepath')
+def main(filepath):
+    moiptimiser = MOIPtimiser.from_lp_file(filepath)
+    for nd in moiptimiser.find_non_dominated_objective_vectors():
+        click.echo(repr(nd))
