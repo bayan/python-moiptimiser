@@ -43,19 +43,24 @@ class MOIPtimiser:
     def __all_ge(self, left, right):
         return all((x >= y for x, y in zip(left, right)))
 
+    # True if left is relaxation of the right
+    def __is_relaxation(self, left, right):
+        return right != left and self.__all_ge(left, right)
+
+    def __are_feasible_vectors_at_depth(self, bounds, vectors, depth):
+        for solution in vectors:
+            if not self.__all_ge(bounds[depth:], solution[depth:]):
+                return False
+        return True
+
     def __find_feasible_relaxation(self, depth):
         relaxations_at_depth = self.__relaxation_cache.get(depth)
         if relaxations_at_depth is not None:
             bounds = self.__current_bounds()
             for other_bounds in relaxations_at_depth:
-                if bounds[depth:] != other_bounds and self.__all_ge(other_bounds, bounds[depth:]):
-                    is_feasible = True
+                if self.__is_relaxation(other_bounds, bounds[depth:]):
                     nds = relaxations_at_depth[other_bounds]
-                    for solution in nds:
-                        if not self.__all_ge(bounds[depth:], solution[depth:]):
-                            is_feasible = False
-                            break
-                    if is_feasible:
+                    if self.__are_feasible_vectors_at_depth(bounds, nds, depth):
                         return nds
 
     def __find_non_dominated_objective_vectors(self, depth):
