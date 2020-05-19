@@ -1,5 +1,6 @@
 import gurobipy
 
+
 class MOIPtimiser:
 
     def __init__(self, model):
@@ -34,7 +35,8 @@ class MOIPtimiser:
         return tuple(bounds)
 
     def __store_relaxation_in_cache(self, depth, bounds, solutions):
-        if depth not in self.__relaxation_cache: self.__relaxation_cache[depth] = {}
+        if depth not in self.__relaxation_cache:
+            self.__relaxation_cache[depth] = {}
         self.__relaxation_cache[depth][bounds] = solutions
 
     def __find_feasible_relaxation(self, depth):
@@ -42,11 +44,11 @@ class MOIPtimiser:
         if relaxations_at_depth is not None:
             bounds = self.__current_bounds()
             for other_bounds in relaxations_at_depth:
-                if bounds[depth:] != other_bounds and all(( x >= y for x,y in zip(other_bounds, bounds[depth:]) )):
+                if bounds[depth:] != other_bounds and all((x >= y for x, y in zip(other_bounds, bounds[depth:]))):
                     is_feasible = True
                     nds = relaxations_at_depth[other_bounds]
                     for solution in nds:
-                        if not all(( x >= y for x,y in zip(bounds[depth:], solution[depth:]) )):
+                        if not all((x >= y for x, y in zip(bounds[depth:], solution[depth:]))):
                             is_feasible = False
                             break
                     if is_feasible:
@@ -54,7 +56,8 @@ class MOIPtimiser:
 
     def __find_non_dominated_objective_vectors(self, depth):
         relaxation = self.__find_feasible_relaxation(depth)
-        if relaxation is not None: return relaxation
+        if relaxation is not None:
+            return relaxation
 
         elif depth == 1:
             self.__model.optimize()
@@ -73,7 +76,7 @@ class MOIPtimiser:
                     self.__store_relaxation_in_cache(depth, self.__current_bounds()[depth:], nds)
                     return nds
                 nds = nds.union(new_nds)
-                new_bound = max([ nd[depth-1] for nd in new_nds ]) - 1
+                new_bound = max([nd[depth-1] for nd in new_nds]) - 1
 
     def find_non_dominated_objective_vectors(self):
         nds = self.__find_non_dominated_objective_vectors(self.__model.NumObj)
@@ -81,5 +84,5 @@ class MOIPtimiser:
 
     def from_lp_file(filepath):
         model = gurobipy.read(filepath)
-        model.Params.OutputFlag = 0 # Suppress console output
+        model.Params.OutputFlag = 0  # Suppress console output
         return MOIPtimiser(model)

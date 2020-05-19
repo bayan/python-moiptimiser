@@ -18,6 +18,7 @@ import click
 
 from moiptimiser.impl import MOIPtimiser
 
+
 @click.command(help='FILEPATH points to a multi-objective linear programming file using the LP format')
 @click.argument('filepath')
 def main(filepath):
