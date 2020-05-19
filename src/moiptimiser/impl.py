@@ -5,15 +5,21 @@ class MOIPtimiser:
 
     def __init__(self, model):
         self.__model = model
-        self.__init_upper_bound_constraints()
+        self.__init_bound_constraints()
         self.__relaxation_cache = {}
 
-    def __init_upper_bound_constraints(self):
+    def __init_bound_constraints(self):
         self.__objective_constraints = []
         for i in range(self.__model.NumObj):
             objective = self.__model.getObjective(i)
-            constraint = self.__model.addConstr(objective, '<', gurobipy.GRB.INFINITY)
+            if self.__is_min():
+                constraint = self.__model.addConstr(objective, '<', gurobipy.GRB.INFINITY)
+            else:
+                constraint = self.__model.addConstr(objective, '>', -gurobipy.GRB.INFINITY)
             self.__objective_constraints.append(constraint)
+
+    def __is_min(self):
+        return self.__model.ModelSense == 1
 
     def __is_feasible(self):
         return self.__model.getAttr('Status') == gurobipy.GRB.OPTIMAL
@@ -43,13 +49,22 @@ class MOIPtimiser:
     def __all_ge(self, left, right):
         return all((x >= y for x, y in zip(left, right)))
 
+    # True if each left[i] <= right[i]
+    def __all_le(self, left, right):
+        return all((x <= y for x, y in zip(left, right)))
+
     # True if left is relaxation of the right
     def __is_relaxation(self, left, right):
-        return right != left and self.__all_ge(left, right)
+        if self.__is_min():
+            return right != left and self.__all_ge(left, right)
+        else:
+            return right != left and self.__all_le(left, right)
 
     def __are_feasible_vectors_at_depth(self, bounds, vectors, depth):
         for solution in vectors:
-            if not self.__all_ge(bounds[depth:], solution[depth:]):
+            if self.__is_min() and not self.__all_ge(bounds[depth:], solution[depth:]):
+                return False
+            if not self.__is_min() and not self.__all_le(bounds[depth:], solution[depth:]):
                 return False
         return True
 
@@ -76,7 +91,7 @@ class MOIPtimiser:
 
         else:
             nds = set()
-            new_bound = gurobipy.GRB.INFINITY
+            new_bound = gurobipy.GRB.INFINITY if self.__is_min() else -gurobipy.GRB.INFINITY
             while True:
                 self.__objective_constraints[depth-1].rhs = new_bound
                 self.__model.update()
@@ -85,7 +100,10 @@ class MOIPtimiser:
                     self.__store_relaxation_in_cache(depth, self.__current_bounds()[depth:], nds)
                     return nds
                 nds = nds.union(new_nds)
-                new_bound = max([nd[depth-1] for nd in new_nds]) - 1
+                if self.__is_min():
+                    new_bound = max([nd[depth-1] for nd in new_nds]) - 1
+                else:
+                    new_bound = min([nd[depth-1] for nd in new_nds]) + 1
 
     def find_non_dominated_objective_vectors(self):
         nds = self.__find_non_dominated_objective_vectors(self.__model.NumObj)
