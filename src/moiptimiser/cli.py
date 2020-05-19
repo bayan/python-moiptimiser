@@ -22,5 +22,7 @@ from moiptimiser.impl import MOIPtimiser
 @click.argument('filepath')
 def main(filepath):
     moiptimiser = MOIPtimiser.from_lp_file(filepath)
-    for nd in moiptimiser.find_non_dominated_objective_vectors():
+    nds = moiptimiser.find_non_dominated_objective_vectors()
+    for nd in nds:
         click.echo(repr(nd))
+    click.echo(f"{len(nds)} non dominated vectors found")
