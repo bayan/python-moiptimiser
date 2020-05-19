@@ -91,3 +91,23 @@ def test_paper():
     assert (13, 9, 16, 11) in nds
     assert (12, 11, 11, 13) in nds
     assert (11, 19, 12, 14) in nds
+
+
+def test_paper_as_max():
+    optimiser = MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')
+    nds = optimiser.find_non_dominated_objective_vectors()
+    assert len(nds) == 14
+    assert (-19, -15, -14, -11) in nds
+    assert (-18, -15, -15, -9) in nds
+    assert (-17, -16, -13, -11) in nds
+    assert (-17, -13, -15, -11) in nds
+    assert (-16, -18, -15, -9) in nds
+    assert (-16, -15, -10, -13) in nds
+    assert (-15, -17, -11, -10) in nds
+    assert (-15, -16, -7, -12) in nds
+    assert (-14, -11, -16, -9) in nds
+    assert (-14, -8, -23, -13) in nds
+    assert (-13, -19, -17, -10) in nds
+    assert (-13, -9, -16, -11) in nds
+    assert (-12, -11, -11, -13) in nds
+    assert (-11, -19, -12, -14) in nds
