@@ -47,7 +47,7 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: Unix',
         'Operating System :: POSIX',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Utilities',
     ],
     project_urls={
@@ -58,7 +58,7 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=3.7',
+    python_requires='>=3.9',
     install_requires=[
         'click',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
