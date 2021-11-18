@@ -51,7 +51,7 @@ Since there are multiple objectives, there may be many solutions, each of which 
 
 However, due to the importance of such functionality, much research has been invested into finding better algorithms that can efficiently find all solutions.
 
-This python package extends Gurobi's multi-objective functionality by using the algorithm developed by (Ozlen et al., 2014). It provides a module that can be used in python programs, as well as a command line tool that can read `multi-objective LP <https://www.gurobi.com/documentation/9.0/refman/lp_format.html>`_ files.
+This python package extends Gurobi's multi-objective functionality by using the algorithms developed by (Ozlen et al., 2014) and (Tamby & Vanderpooten, 2020). It provides a module that can be used in python programs, as well as a command line tool that can read `multi-objective LP <https://www.gurobi.com/documentation/9.0/refman/lp_format.html>`_ files.
 
 
 
@@ -92,3 +92,5 @@ References
 ==========
 
 Ozlen, M., Burton, B.A., MacRae, C.A.G., 2014. Multi-Objective Integer Programming: An Improved Recursive Algorithm. J Optim Theory Appl 160, 470–482. https://doi.org/10.1007/s10957-013-0364-y
+
+Tamby, S., & Vanderpooten, D. (2020). Enumeration of the Nondominated Set of Multiobjective Discrete Optimization Problems. INFORMS Journal on Computing, 33(1), 72–85. https://doi.org/10.1287/ijoc.2020.0953
