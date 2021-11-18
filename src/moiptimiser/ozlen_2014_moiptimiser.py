@@ -108,8 +108,3 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
     def find_non_dominated_objective_vectors(self):
         nds = self.__find_non_dominated_objective_vectors(self.__model.NumObj)
         return nds
-
-    def from_lp_file(filepath):
-        model = gurobipy.read(filepath)
-        model.Params.OutputFlag = 0  # Suppress console output
-        return Ozlen2014MOIPtimiser(model)

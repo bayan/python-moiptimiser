@@ -24,7 +24,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         nds = set()
         return nds
 
-    def from_lp_file(filepath):
-        model = gurobipy.read(filepath)
-        model.Params.OutputFlag = 0  # Suppress console output
-        return Tamby2020MOIPtimiser(model)
+    def find_non_dominated_objective_vectors(self):
+        nds = self.__find_non_dominated_objective_vectors()
+        return nds
