@@ -18,7 +18,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
             self._objective_constraints.append(constraint)
 
     def _is_min(self):
-        return self._model.ModelSense == 1
+        return self._model.ModelSense == gurobipy.GRB.MINIMIZE
 
     def _is_feasible(self):
         return self._model.getAttr('Status') == gurobipy.GRB.OPTIMAL
