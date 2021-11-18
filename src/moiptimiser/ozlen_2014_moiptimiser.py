@@ -13,9 +13,9 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         for i in range(self.__model.NumObj):
             objective = self.__model.getObjective(i)
             if self.__is_min():
-                constraint = self.__model.addConstr(objective, '<', gurobipy.GRB.INFINITY)
+                constraint = self.__model.addLConstr(objective, '<', gurobipy.GRB.INFINITY)
             else:
-                constraint = self.__model.addConstr(objective, '>', -gurobipy.GRB.INFINITY)
+                constraint = self.__model.addLConstr(objective, '>', -gurobipy.GRB.INFINITY)
             self.__objective_constraints.append(constraint)
 
     def __is_min(self):
