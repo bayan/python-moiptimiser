@@ -20,7 +20,10 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def __is_min(self):
         return self.__model.ModelSense == 1
 
-    def find_non_dominated_objective_vectors(self):
+    def __update_search_region(self):
+        pass
+
+    def __find_non_dominated_objective_vectors(self):
         nds = set()
         return nds
 
