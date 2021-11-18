@@ -79,6 +79,10 @@ https://python-moiptimiser.readthedocs.io/
 Development
 ===========
 
+Install python libraries::
+
+    pip install cmake dlib gurobipy tox twine wheel bumpversion
+
 To run the all tests run::
 
     tox
