@@ -45,13 +45,13 @@ Overview
 
 Multi-Objective Integer Programming with Gurobi and Python
 
-The optimisation software from `Gurobi <https://www.gurobi.com/>`_ now supports `multi-objective programming <https://www.gurobi.com/documentation/9.0/refman/multiple_objectives.html>`_.
+The optimisation software from `Gurobi <https://www.gurobi.com/>`_ now supports `multi-objective programming <https://www.gurobi.com/documentation/9.5/refman/multiple_objectives.html>`_.
 
 Since there are multiple objectives, there may be many solutions, each of which may optimise the objectives with a different set of priorities. Finding all such solutions can be algorithmically costly, so Gurobi's solver only returns a single result.
 
 However, due to the importance of such functionality, much research has been invested into finding better algorithms that can efficiently find all solutions.
 
-This python package extends Gurobi's multi-objective functionality by using the algorithms developed by (Ozlen et al., 2014) and (Tamby & Vanderpooten, 2020). It provides a module that can be used in python programs, as well as a command line tool that can read `multi-objective LP <https://www.gurobi.com/documentation/9.0/refman/lp_format.html>`_ files.
+This python package extends Gurobi's multi-objective functionality by using the algorithms developed by (Ozlen et al., 2014) and (Tamby & Vanderpooten, 2020). It provides a module that can be used in python programs, as well as a command line tool that can read `multi-objective LP <https://www.gurobi.com/documentation/9.5/refman/lp_format.html>`_ files.
 
 
 
