@@ -1,8 +1,7 @@
-from moiptimiser.impl import MOIPtimiser
-
+from moiptimiser.ozlen_2014_moiptimiser import Ozlen2014MOIPtimiser
 
 def test_2AP05():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/2AP05.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/2AP05.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 9
     assert (50, 24) in nds
@@ -17,7 +16,7 @@ def test_2AP05():
 
 
 def test_3AP05():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/3AP05.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/3AP05.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 12
     assert (50, 24, 44) in nds
@@ -35,7 +34,7 @@ def test_3AP05():
 
 
 def test_4AP05():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/4AP05.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/4AP05.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 33
     assert (60, 39, 35, 32) in nds
@@ -74,7 +73,7 @@ def test_4AP05():
 
 
 def test_paper():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/paper.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/paper.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (19, 15, 14, 11) in nds
@@ -94,7 +93,7 @@ def test_paper():
 
 
 def test_paper_as_max():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (-19, -15, -14, -11) in nds
@@ -114,7 +113,7 @@ def test_paper_as_max():
 
 
 def test_2KP50():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 43
     assert (2414, 2229) in nds
@@ -163,7 +162,7 @@ def test_2KP50():
 
 
 def test_3KP10():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 6
     assert (474, 336, 344) in nds
@@ -175,7 +174,7 @@ def test_3KP10():
 
 
 def test_4KP10():
-    optimiser = MOIPtimiser.from_lp_file('tests/examples/4KP10.lp')
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/4KP10.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 11
     assert (474, 336, 344, 501) in nds

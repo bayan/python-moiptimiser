@@ -1,1 +1,1 @@
-from moiptimiser.moiptimiser import MOIPtimiser
+from moiptimiser.ozlen_2014_moiptimiser import Ozlen2014MOIPtimiser
