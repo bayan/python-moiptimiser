@@ -21,7 +21,7 @@ from moiptimiser.impl import *
 @click.command(help='FILEPATH points to a multi-objective linear programming file using the LP format')
 @click.argument('filepath')
 def main(filepath):
-    moiptimiser = Ozlen2014MOIPtimiser.from_lp_file(filepath)
+    moiptimiser = Tamby2020MOIPtimiser.from_lp_file(filepath)
     nds = moiptimiser.find_non_dominated_objective_vectors()
     for nd in nds:
         click.echo(repr(nd))
