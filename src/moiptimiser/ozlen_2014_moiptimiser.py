@@ -4,7 +4,21 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
         super().__init__(model)
+        self._init_bound_constraints()
         self._relaxation_cache = {}
+
+    def _init_bound_constraints(self):
+        self._objective_constraints = []
+        for i in range(self._model.NumObj):
+            objective = self._model.getObjective(i)
+            if self._is_min():
+                constraint = self._model.addLConstr(objective, '<', gurobipy.GRB.INFINITY)
+            else:
+                constraint = self._model.addLConstr(objective, '>', -gurobipy.GRB.INFINITY)
+            self._objective_constraints.append(constraint)
+
+    def _is_min(self):
+        return self._model.ModelSense == 1
 
     def _is_feasible(self):
         return self._model.getAttr('Status') == gurobipy.GRB.OPTIMAL
