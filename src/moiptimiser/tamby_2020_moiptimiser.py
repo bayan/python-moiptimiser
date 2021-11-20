@@ -16,6 +16,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _kth_projection(self, point, k):
         return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
 
+    def strictly_dominates(self, left, right):
+        return all((x < y for x, y in zip(left, right)))
+
     def _copy_vars_to(self, source, target):
         for var in source.getVars():
             target.addVar(lb=var.lb, ub=var.ub, obj=var.obj,
