@@ -12,7 +12,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _init_M(self):
         self._M = gurobipy.GRB.MAXINT
 
-
     def _kth_projection(self, point, k):
         return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
 
@@ -95,7 +94,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 new_expression.add(new_var, coeff)
             target.addConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
         target.update()
-
 
     def _kth_obj_model(self, k):
         new_model = gurobipy.Model(f"objective-{k}")
