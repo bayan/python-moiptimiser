@@ -13,6 +13,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         nds = set()
         return nds
 
+    def _kth_projection(self, point, k):
+        return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
+
     def _copy_vars_to(self, source, target):
         for var in source.getVars():
             target.addVar(lb=var.lb, ub=var.ub, obj=var.obj,
