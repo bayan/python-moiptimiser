@@ -1,4 +1,5 @@
 from moiptimiser.moiptimiser import *
+import itertools
 
 class Tamby2020MOIPtimiser(MOIPtimiser):
 
@@ -110,6 +111,19 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             point.append(kth_model.ObjNVal)
         self._ideal_point = tuple(point)
 
+    def _hypervolume_of_projection(self, k, u):
+        h = 1
+        for i in range(self._model.NumObj):
+            if i != k:
+                h = h * (u[i] - self._ideal_point[i])
+        return h
+
+    def _next_k_u(self, U):
+        ku_pairs = list(itertools.product(range(self._model.NumObj), range(len(U))))
+        h_values = [ self._hypervolume_of_projection(k,u) for k,u in ku_pairs ]
+        max_h = max(h_values)
+        return h_values[h_values.index(max_h)]
+
     # Algorithm 2
     def find_non_dominated_objective_vectors(self):
         # Output
@@ -129,7 +143,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         while len(U) > 0:
 
             # Line 4
-            pass
+            k, u = self._next_k_u(U)
 
         # Output
         return Y_ND
