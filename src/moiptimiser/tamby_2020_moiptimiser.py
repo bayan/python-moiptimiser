@@ -93,7 +93,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 coeff = constraint_expression.getCoeff(i)
                 new_var = target.getVarByName(var.Varname)
                 new_expression.add(new_var, coeff)
-            target.addConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
+            target.addLConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
         target.update()
 
     def _kth_obj_model(self, k):
