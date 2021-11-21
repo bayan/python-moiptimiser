@@ -123,7 +123,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         ku_pairs = list(itertools.product(range(self._model.NumObj), U))
         h_values = [ self._hypervolume_of_projection(k,u) for k,u in ku_pairs ]
         max_h = max(h_values)
-        return h_values[h_values.index(max_h)]
+        return ku_pairs[h_values.index(max_h)]
 
     # Algorithm 2
     def find_non_dominated_objective_vectors(self):
