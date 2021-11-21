@@ -188,3 +188,16 @@ def test_4KP10():
     assert (383, 237, 331, 524) in nds
     assert (361, 316, 410, 374) in nds
     assert (357, 226, 378, 412) in nds
+
+
+def test_ideal_point():
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/2AP05.lp')._ideal_point) == (21, 24)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3AP05.lp')._ideal_point) == (21, 24, 31)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4AP05.lp')._ideal_point) == (21, 24, 31, 21)
+
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.lp')._ideal_point) == (11, 8, 7, 9)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')._ideal_point) == (-11, -8, -7, -9)
+
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')._ideal_point) == (2414, 2450)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')._ideal_point) == (474, 336, 410)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4KP10.lp')._ideal_point) == (474, 336, 410, 524)
