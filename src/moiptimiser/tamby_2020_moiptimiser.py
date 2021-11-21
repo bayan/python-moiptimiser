@@ -108,7 +108,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         for k in range(self._model.NumObj):
             kth_model = self._kth_obj_model(k)
             kth_model.optimize()
-            point.append(kth_model.ObjNVal)
+            point.append(int(kth_model.ObjNVal))
         self._ideal_point = tuple(point)
 
     def _hypervolume_of_projection(self, k, u):
