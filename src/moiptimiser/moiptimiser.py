@@ -14,3 +14,8 @@ class MOIPtimiser:
 
     def _is_min(self):
         return self._model.ModelSense == GRB.MINIMIZE
+
+    def _print_model(self, model):
+        model.Params.OutputFlag = 1
+        model.display()
+        model.Params.OutputFlag = 0
