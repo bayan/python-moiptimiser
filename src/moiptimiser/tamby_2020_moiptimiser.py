@@ -150,7 +150,64 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         # For the Two-Stage Approach, solve the first sub problem and return the second stage.
         # For the Direct Approach, return the weighted single objective problem.
         # First, we implement the Two-Stage Approach.
-        pass
+
+        # First stage
+        if self._is_min():
+            constraint_sense = GRB.LESS_EQUAL
+            adjustment = -1
+        else:
+            constraint_sense = GRB.GREATER_EQUAL
+            adjustment = 1
+        stage1_model = self._kth_obj_model(k)
+        for i in range(self._model.NumObj):
+            if i != k:
+                other_objective = self._model.getObjective(i)
+                new_expression = gp.LinExpr()
+                for i in range(other_objective.size()):
+                    var = other_objective.getVar(i)
+                    coeff = other_objective.getCoeff(i)
+                    new_var = stage1_model.getVarByName(var.VarName)
+                    new_expression.add(new_var, coeff)
+                # Alter u[i] because Gurobi does not support strict < inequality
+                stage1_model.addLConstr(new_expression, constraint_sense, u[i] + adjustment)
+
+        stage1_model.optimize()
+
+        # Second stage
+        stage2_model = gp.Model()
+        stage2_model.Params.OutputFlag = 0  # Suppress console output
+        self._copy_vars_to(self._model, stage2_model)
+        self._copy_constraints_to(self._model, stage2_model)
+
+        coefficient_dict = {}
+        for i in range(self._model.NumObj):
+            other_objective = self._model.getObjective(i)
+            new_expression = gp.LinExpr()
+            for i in range(other_objective.size()):
+                var = other_objective.getVar(i)
+                coeff = other_objective.getCoeff(i)
+                new_var = stage1_model.getVarByName(var.VarName)
+                new_expression.add(new_var, coeff)
+                if i != k:
+                    if var.VarName not in coefficient_dict:
+                        coefficient_dict[var.VarName] = 0
+                    coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
+            if i == k:
+                rhs = int(stage1_model.ObjVal)
+                constraint_sense = GRB.EQUAL
+            else:
+                rhs = self._eval_objective_given_model(model, self._model.getObjective(i))
+                constraint_sense = GRB.LESS_EQUAL if self._is_min() else GRB.GREATER_EQUAL
+            stage2_model.addLConstr(new_expression, constraint_sense, rhs)
+
+        # Set the objective for the stage 2 model
+        summed_expression = gp.LinExpr()
+        for varname in coefficient_dict:
+            new_var = stage1_model.getVarByName(varname)
+            new_expression.add(new_var, coefficient_dict[varname])
+        stage2_model.setObjective(new_expression)
+        stage2_model.update()
+        return stage2_model
 
     def _find_point(self, k, u):
         subproblem = self._construct_subproblem(k, u)
