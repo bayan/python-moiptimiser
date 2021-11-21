@@ -34,7 +34,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 # Line 5
                 for l in range(self._model.NumObj):
                     # Line 6
-                    ul = u.copy()
+                    ul = list(u)
                     ul[l] = new_point[l]
                     ul = tuple(ul)
                     # Line 7
@@ -42,9 +42,10 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                         new_defining_points = set()
                         if k != l:
                             # Line 8
-                            for defining_point in self._defining_points[(k, u)]:
-                                if defining_point[l] < new_point[l]:
-                                    new_defining_points.add(defining_point)
+                            if (k,u) in self._defining_points:
+                                for defining_point in self._defining_points[(k, u)]:
+                                    if defining_point[l] < new_point[l]:
+                                        new_defining_points.add(defining_point)
                         self._defining_points[(k, ul)] = new_defining_points
                     # Line 9
                     self._defining_points[(l,ul)] = set([new_point])
@@ -62,12 +63,11 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             # Line 12
             else:
                 for k in range(self._model.NumObj):
-                    if k != l:
-                        if new_point[k] == u[k]:
-                            kth_new_point_projection = self._kth_projection(new_point, k)
-                            kth_u_projection = self._kth_projection(u, k)
-                            if self.strictly_dominates(kth_new_point_projection, kth_u_projection):
-                                self._defining_points[(k,u)].add(new_point)
+                    if new_point[k] == u[k]:
+                        kth_new_point_projection = self._kth_projection(new_point, k)
+                        kth_u_projection = self._kth_projection(u, k)
+                        if self.strictly_dominates(kth_new_point_projection, kth_u_projection):
+                            self._defining_points[(k,u)].add(new_point)
         return new_search_region
 
     def _copy_vars_to(self, source, target):
@@ -141,7 +141,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             coeff = expression.getCoeff(i)
             value = vals_by_name[var.VarName]
             total = total + coeff * value
-        return total
+        return int(total)
 
     def _eval_objective_given_model(self, model, objective):
         return self._eval_linexpr_for_values(objective, self._var_values_by_name_dict(model))
@@ -163,14 +163,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             if i != k:
                 other_objective = self._model.getObjective(i)
                 new_expression = gp.LinExpr()
-                for i in range(other_objective.size()):
-                    var = other_objective.getVar(i)
-                    coeff = other_objective.getCoeff(i)
+                for j in range(other_objective.size()):
+                    var = other_objective.getVar(j)
+                    coeff = other_objective.getCoeff(j)
                     new_var = stage1_model.getVarByName(var.VarName)
                     new_expression.add(new_var, coeff)
                 # Alter u[i] because Gurobi does not support strict < inequality
                 stage1_model.addLConstr(new_expression, constraint_sense, u[i] + adjustment)
-
         stage1_model.optimize()
 
         # Second stage
@@ -183,9 +182,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         for i in range(self._model.NumObj):
             other_objective = self._model.getObjective(i)
             new_expression = gp.LinExpr()
-            for i in range(other_objective.size()):
-                var = other_objective.getVar(i)
-                coeff = other_objective.getCoeff(i)
+            for j in range(other_objective.size()):
+                var = other_objective.getVar(j)
+                coeff = other_objective.getCoeff(j)
                 new_var = stage1_model.getVarByName(var.VarName)
                 new_expression.add(new_var, coeff)
                 if i != k:
@@ -193,19 +192,19 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                         coefficient_dict[var.VarName] = 0
                     coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
             if i == k:
-                rhs = int(stage1_model.ObjVal)
+                rhs = int(stage1_model.ObjNVal)
                 constraint_sense = GRB.EQUAL
             else:
-                rhs = self._eval_objective_given_model(model, self._model.getObjective(i))
+                rhs = self._eval_objective_given_model(stage1_model, self._model.getObjective(i))
                 constraint_sense = GRB.LESS_EQUAL if self._is_min() else GRB.GREATER_EQUAL
             stage2_model.addLConstr(new_expression, constraint_sense, rhs)
 
         # Set the objective for the stage 2 model
         summed_expression = gp.LinExpr()
         for varname in coefficient_dict:
-            new_var = stage1_model.getVarByName(varname)
-            new_expression.add(new_var, coefficient_dict[varname])
-        stage2_model.setObjective(new_expression)
+            new_var = stage2_model.getVarByName(varname)
+            summed_expression.add(new_var, coefficient_dict[varname])
+        stage2_model.setObjective(summed_expression)
         stage2_model.update()
         return stage2_model
 
@@ -241,6 +240,8 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             V[k].add( (u, new_point[k]) )
 
             # Line 7
+            if (k,u) not in self._defining_points:
+                self._defining_points[(k,u)] = set()
             if new_point not in self._defining_points[(k,u)]:
                 # Line 8
                 U = self._update_search_region(new_point, U)
@@ -248,7 +249,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 N.add(new_point)
 
             # Line 10
-            for u_dash in U:
+            for u_dash in U.copy():
                 # Line 11
                 for k in range(self._model.NumObj):
                     # Line 12
@@ -260,11 +261,12 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                         # Line 15
                         for u, y in V[(k)]:
                             # Line 16
-                            kth_u_dash_projection = self._kth_projection(u_dash, k)
-                            kth_u_projection = self._kth_projection(u, k)
-                            weakly_dominated = self.weakly_dominates(kth_u_dash_projection, kth_u_projection)
-                            if weakly_dominated and new_point[k] == u_dash[k]:
-                                # Line 17
-                                U.remove(u_dash)
+                            if u_dash in U:
+                                kth_u_dash_projection = self._kth_projection(u_dash, k)
+                                kth_u_projection = self._kth_projection(u, k)
+                                weakly_dominated = self.weakly_dominates(kth_u_dash_projection, kth_u_projection)
+                                if weakly_dominated and new_point[k] == u_dash[k]:
+                                    # Line 17
+                                    U.remove(u_dash)
         # Line 18
         return N
