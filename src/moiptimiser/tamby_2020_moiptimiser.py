@@ -11,7 +11,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         self._init_ideal_point()
 
     def _init_M(self):
-        self._M = gurobipy.GRB.MAXINT
+        self._M = GRB.MAXINT
 
     def _kth_projection(self, point, k):
         return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
@@ -75,7 +75,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _copy_objective_to(self, source, target, sourceN, targetN):
         source_objective = source.getObjective(sourceN)
-        target_objective = gurobipy.LinExpr()
+        target_objective = gp.LinExpr()
         for i in range(source_objective.size()):
             var = source_objective.getVar(i)
             coeff = source_objective.getCoeff(i)
@@ -87,7 +87,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _copy_constraints_to(self, source, target):
         for constr in source.getConstrs():
             constraint_expression = source.getRow(constr)
-            new_expression = gurobipy.LinExpr()
+            new_expression = gp.LinExpr()
             for i in range(constraint_expression.size()):
                 var = constraint_expression.getVar(i)
                 coeff = constraint_expression.getCoeff(i)
@@ -97,7 +97,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         target.update()
 
     def _kth_obj_model(self, k):
-        new_model = gurobipy.Model(f"objective-{k}")
+        new_model = gp.Model(f"objective-{k}")
         new_model.Params.OutputFlag = 0  # Suppress console output
         self._copy_vars_to(self._model, new_model)
         self._copy_objective_to(self._model, new_model, k, 0)

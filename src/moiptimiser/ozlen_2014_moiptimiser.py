@@ -12,16 +12,16 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         for i in range(self._model.NumObj):
             objective = self._model.getObjective(i)
             if self._is_min():
-                constraint = self._model.addLConstr(objective, '<', gurobipy.GRB.INFINITY)
+                constraint = self._model.addLConstr(objective, '<', GRB.INFINITY)
             else:
-                constraint = self._model.addLConstr(objective, '>', -gurobipy.GRB.INFINITY)
+                constraint = self._model.addLConstr(objective, '>', -GRB.INFINITY)
             self._objective_constraints.append(constraint)
 
     def _is_min(self):
-        return self._model.ModelSense == gurobipy.GRB.MINIMIZE
+        return self._model.ModelSense == GRB.MINIMIZE
 
     def _is_feasible(self):
-        return self._model.getAttr('Status') == gurobipy.GRB.OPTIMAL
+        return self._model.getAttr('Status') == GRB.OPTIMAL
 
     def _is_infeasible(self):
         return not self._is_feasible()
@@ -90,7 +90,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
         else:
             nds = set()
-            new_bound = gurobipy.GRB.INFINITY if self._is_min() else -gurobipy.GRB.INFINITY
+            new_bound = GRB.INFINITY if self._is_min() else -GRB.INFINITY
             while True:
                 self._objective_constraints[depth-1].rhs = new_bound
                 self._model.update()
