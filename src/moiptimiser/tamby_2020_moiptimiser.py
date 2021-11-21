@@ -132,7 +132,8 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
         # Line 1
         N = set()
-        U = set([self._M] * self._model.NumObj)
+        U = set()
+        U.add( tuple([self._M] * self._model.NumObj) )
         V = {}
         for k in range(self._model.NumObj):
             V[k] = set()
