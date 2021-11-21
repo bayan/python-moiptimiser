@@ -11,3 +11,6 @@ class MOIPtimiser:
         model = gp.read(filepath)
         model.Params.OutputFlag = 0  # Suppress console output
         return cls(model)
+
+    def _is_min(self):
+        return self._model.ModelSense == GRB.MINIMIZE

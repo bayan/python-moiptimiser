@@ -17,9 +17,6 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
                 constraint = self._model.addLConstr(objective, '>', -GRB.INFINITY)
             self._objective_constraints.append(constraint)
 
-    def _is_min(self):
-        return self._model.ModelSense == GRB.MINIMIZE
-
     def _is_feasible(self):
         return self._model.getAttr('Status') == GRB.OPTIMAL
 
