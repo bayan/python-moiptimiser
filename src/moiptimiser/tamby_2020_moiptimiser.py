@@ -79,7 +79,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         for i in range(source_objective.size()):
             var = source_objective.getVar(i)
             coeff = source_objective.getCoeff(i)
-            new_var = target.getVarByName(var.Varname)
+            new_var = target.getVarByName(var.VarName)
             target_objective.add(new_var, coeff)
         target.setObjectiveN(target_objective, targetN)
         target.update()
