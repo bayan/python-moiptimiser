@@ -98,6 +98,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _kth_obj_model(self, k):
         new_model = gurobipy.Model(f"objective-{k}")
+        new_model.Params.OutputFlag = 0  # Suppress console output
         self._copy_vars_to(self._model, new_model)
         self._copy_objective_to(self._model, new_model, k, 0)
         self._copy_constraints_to(self._model, new_model)
