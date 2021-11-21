@@ -18,6 +18,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def strictly_dominates(self, left, right):
         return all((x < y for x, y in zip(left, right)))
 
+    def weakly_dominates(self, left, right):
+        return all((x <= y for x, y in zip(left, right)))
+
     # Algorithm 1
     def _update_search_region(self, new_point, search_region):
         # Output
@@ -125,11 +128,41 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         max_h = max(h_values)
         return ku_pairs[h_values.index(max_h)]
 
+    def _var_values_by_name_dict(self, model):
+        vals_by_name = {}
+        for var in model.getVars():
+            vals_by_name[var.VarName] = var.X
+        return vals_by_name
+
+    def _eval_linexpr_for_values(self, expression, vals_by_name):
+        total = 0
+        for i in range(expression.size()):
+            var = expression.getVar(i)
+            coeff = expression.getCoeff(i)
+            value = vals_by_name[var.VarName]
+            total = total + coeff * value
+        return total
+
+    def _eval_objective_given_model(self, model, objective):
+        return self._eval_linexpr_for_values(objective, self._var_values_by_name_dict(model))
+
+    def _construct_subproblem(self, k, u):
+        # For the Two-Stage Approach, solve the first sub problem and return the second stage.
+        # For the Direct Approach, return the weighted single objective problem.
+        # First, we implement the Two-Stage Approach.
+        pass
+
+    def _find_point(self, k, u):
+        subproblem = self._construct_subproblem(k, u)
+        subproblem.optimize()
+        new_point = tuple(
+            [self._eval_objective_given_model(subproblem, self._model.getObjective(i))
+             for i in range(self._model.NumObj)]
+        )
+        return new_point
+
     # Algorithm 2
     def find_non_dominated_objective_vectors(self):
-        # Output
-        Y_ND = set()
-
         # Line 1
         N = set()
         U = set()
@@ -139,13 +172,42 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             V[k] = set()
 
         # Line 2
-        # Ideal point already computed on class instantiation.
+        # Ideal point computed once already in the class constructor
 
         # Line 3
         while len(U) > 0:
-
             # Line 4
             k, u = self._next_k_u(U)
+            # Line 5 - but without specifying a starting solution for now
+            new_point = self._find_point(k, u)
+            # Line 6
+            V[k].add( (u, new_point[k]) )
 
-        # Output
-        return Y_ND
+            # Line 7
+            if new_point not in self._defining_points[(k,u)]:
+                # Line 8
+                U = self._update_search_region(new_point, U)
+                # Line 9
+                N.add(new_point)
+
+            # Line 10
+            for u_dash in U:
+                # Line 11
+                for k in range(self._model.NumObj):
+                    # Line 12
+                    if u_dash[k] == self._ideal_point[k]:
+                        # Line 13
+                        U.remove(u_dash)
+                    # Line 14
+                    else:
+                        # Line 15
+                        for u, y in V[(k)]:
+                            # Line 16
+                            kth_u_dash_projection = self._kth_projection(u_dash, k)
+                            kth_u_projection = self._kth_projection(u, k)
+                            weakly_dominated = self.weakly_dominates(kth_u_dash_projection, kth_u_projection)
+                            if weakly_dominated and new_point[k] == u_dash[k]:
+                                # Line 17
+                                U.remove(u_dash)
+        # Line 18
+        return N
