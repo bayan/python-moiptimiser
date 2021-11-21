@@ -5,7 +5,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
         super().__init__(model)
-        self._search_region = set()
         self._defining_points = dict()
         self._init_M()
         self._init_ideal_point()
@@ -20,11 +19,11 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         return all((x < y for x, y in zip(left, right)))
 
     # Algorithm 1
-    def _update_search_region(self, new_point):
+    def _update_search_region(self, new_point, search_region):
         # Output
-        new_search_region = self._search_region.copy()
+        new_search_region = search_region.copy()
         # Line 2
-        for u in self._search_region:
+        for u in search_region:
             # Line 3
             if self.strictly_dominates(new_point,u):
                 # Line 4
@@ -66,6 +65,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                             kth_u_projection = self._kth_projection(u, k)
                             if self.strictly_dominates(kth_new_point_projection, kth_u_projection):
                                 self._defining_points[(k,u)].add(new_point)
+        return new_search_region
 
     def _copy_vars_to(self, source, target):
         for var in source.getVars():
