@@ -73,7 +73,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _copy_vars_to(self, source, target):
         for var in source.getVars():
             target.addVar(lb=var.lb, ub=var.ub, obj=var.obj,
-                          vtype=var.vtype, name=var.varname)
+                          vtype=var.vtype, name=var.VarName)
         target.update()
 
     def _copy_objective_to(self, source, target, sourceN, targetN):
@@ -94,7 +94,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             for i in range(constraint_expression.size()):
                 var = constraint_expression.getVar(i)
                 coeff = constraint_expression.getCoeff(i)
-                new_var = target.getVarByName(var.Varname)
+                new_var = target.getVarByName(var.VarName)
                 new_expression.add(new_var, coeff)
             target.addLConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
         target.update()
