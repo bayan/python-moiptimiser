@@ -120,7 +120,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         return h
 
     def _next_k_u(self, U):
-        ku_pairs = list(itertools.product(range(self._model.NumObj), range(len(U))))
+        ku_pairs = list(itertools.product(range(self._model.NumObj), U))
         h_values = [ self._hypervolume_of_projection(k,u) for k,u in ku_pairs ]
         max_h = max(h_values)
         return h_values[h_values.index(max_h)]
