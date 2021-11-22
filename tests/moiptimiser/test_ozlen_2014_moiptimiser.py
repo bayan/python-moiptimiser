@@ -72,8 +72,8 @@ def test_4AP05():
     assert (21, 55, 47, 40) in nds
 
 
-def test_paper():
-    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/paper.lp')
+def test_ozlen_2014_paper():
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (19, 15, 14, 11) in nds
@@ -92,8 +92,8 @@ def test_paper():
     assert (11, 19, 12, 14) in nds
 
 
-def test_paper_as_max():
-    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')
+def test_ozlen_2014_paper_as_max():
+    optimiser = Ozlen2014MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.as.max.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (-19, -15, -14, -11) in nds

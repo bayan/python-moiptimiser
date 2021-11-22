@@ -72,8 +72,8 @@ def test_4AP05():
     assert (21, 55, 47, 40) in nds
 
 
-def test_paper():
-    optimiser = Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.lp')
+def test_ozlen_2014_paper():
+    optimiser = Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (19, 15, 14, 11) in nds
@@ -92,8 +92,8 @@ def test_paper():
     assert (11, 19, 12, 14) in nds
 
 
-def test_paper_as_max():
-    optimiser = Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')
+def test_ozlen_2014_paper_as_max():
+    optimiser = Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.as.max.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 14
     assert (-19, -15, -14, -11) in nds
@@ -195,8 +195,8 @@ def test_ideal_point():
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3AP05.lp')._ideal_point) == (21, 24, 31)
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4AP05.lp')._ideal_point) == (21, 24, 31, 21)
 
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.lp')._ideal_point) == (11, 8, 7, 9)
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/paper.as.max.lp')._ideal_point) == (-11, -8, -7, -9)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.lp')._ideal_point) == (11, 8, 7, 9)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.as.max.lp')._ideal_point) == (-11, -8, -7, -9)
 
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')._ideal_point) == (2414, 2450)
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')._ideal_point) == (474, 336, 410)
