@@ -1,12 +1,11 @@
 from moiptimiser.moiptimiser import *
 import itertools
 
-from moiptimiser.utilities import *
-
 class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
         super().__init__(model)
+        self._convert_to_min_problem()
         self._defining_points = dict()
         self._init_M()
         self._init_ideal_point()
@@ -154,12 +153,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         # First, we implement the Two-Stage Approach.
 
         # First stage
-        if self._is_min():
-            constraint_sense = GRB.LESS_EQUAL
-            adjustment = -0.5
-        else:
-            constraint_sense = GRB.GREATER_EQUAL
-            adjustment = 0.5
         stage1_model = self._kth_obj_model(k)
         for i in range(self._model.NumObj):
             if i != k:
@@ -171,7 +164,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     new_var = stage1_model.getVarByName(var.VarName)
                     new_expression.add(new_var, coeff)
                 # Alter u[i] because Gurobi does not support strict < inequality
-                stage1_model.addLConstr(new_expression, constraint_sense, u[i] + adjustment)
+                stage1_model.addLConstr(new_expression, GRB.LESS_EQUAL, u[i] - 0.5)
         stage1_model.optimize()
 
         # Second stage
@@ -198,7 +191,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 constraint_sense = GRB.EQUAL
             else:
                 rhs = self._eval_objective_given_model(stage1_model, self._model.getObjective(i))
-                constraint_sense = GRB.LESS_EQUAL if self._is_min() else GRB.GREATER_EQUAL
+                constraint_sense = GRB.LESS_EQUAL
             stage2_model.addLConstr(new_expression, constraint_sense, rhs)
 
         # Set the objective for the stage 2 model
@@ -271,4 +264,4 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                                     # Line 17
                                     U.remove(u_dash)
         # Line 18
-        return N
+        return self._correct_sign_for_solutions(N)

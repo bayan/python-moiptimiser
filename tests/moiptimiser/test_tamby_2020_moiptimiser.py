@@ -212,8 +212,8 @@ def test_ideal_point():
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4AP05.lp')._ideal_point) == (21, 24, 31, 21)
 
     assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.lp')._ideal_point) == (11, 8, 7, 9)
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.as.max.lp')._ideal_point) == (-11, -8, -7, -9)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/ozlen_2014_paper.as.max.lp')._ideal_point) == (11, 8, 7, 9)
 
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')._ideal_point) == (2414, 2450)
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')._ideal_point) == (474, 336, 410)
-    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4KP10.lp')._ideal_point) == (474, 336, 410, 524)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/2KP50.lp')._ideal_point) == (-2414, -2450)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/3KP10.lp')._ideal_point) == (-474, -336, -410)
+    assert(Tamby2020MOIPtimiser.from_lp_file('tests/examples/4KP10.lp')._ideal_point) == (-474, -336, -410, -524)
