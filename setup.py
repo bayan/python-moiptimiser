@@ -25,7 +25,7 @@ def read(*names, **kwargs):
 
 setup(
     name='moiptimiser',
-    version='0.0.2',
+    version='0.0.3',
     license='MIT',
     description='Multi-Objective Integer Programming with Gurobi and Python',
     long_description='%s\n%s' % (
