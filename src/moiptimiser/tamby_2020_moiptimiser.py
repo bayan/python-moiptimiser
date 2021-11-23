@@ -1,6 +1,8 @@
 from moiptimiser.moiptimiser import *
 import itertools
 
+from moiptimiser.utilities import *
+
 class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
