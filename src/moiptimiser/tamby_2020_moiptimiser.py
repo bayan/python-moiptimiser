@@ -265,7 +265,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                                 kth_u_dash_projection = self._kth_projection(u_dash, k)
                                 kth_u_projection = self._kth_projection(u, k)
                                 weakly_dominated = self.weakly_dominates(kth_u_dash_projection, kth_u_projection)
-                                if weakly_dominated and new_point[k] == u_dash[k]:
+                                if weakly_dominated and y == u_dash[k]:
                                     # Line 17
                                     U.remove(u_dash)
         # Line 18
