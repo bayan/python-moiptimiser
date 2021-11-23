@@ -259,13 +259,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     # Line 14
                     else:
                         # Line 15
-                        for u, y in V[(k)]:
+                        for u, y_k in V[(k)]:
                             # Line 16
                             if u_dash in U:
                                 kth_u_dash_projection = self._kth_projection(u_dash, k)
                                 kth_u_projection = self._kth_projection(u, k)
                                 weakly_dominated = self.weakly_dominates(kth_u_dash_projection, kth_u_projection)
-                                if weakly_dominated and y == u_dash[k]:
+                                if weakly_dominated and y_k == u_dash[k]:
                                     # Line 17
                                     U.remove(u_dash)
         # Line 18
