@@ -1,6 +1,8 @@
 import gurobipy as gp
 from gurobipy import GRB
 
+from moiptimiser.utilities import *
+
 class MOIPtimiser:
 
     def __init__(self, model):
