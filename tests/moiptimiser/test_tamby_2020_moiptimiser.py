@@ -116,14 +116,16 @@ def test_tamby_vanderpooten_paper():
     optimiser = Tamby2020MOIPtimiser.from_lp_file('tests/examples/tamby_vanderpooten_2020.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 7
-    minus_5000 = lambda values: tuple([x - 5000 for x in values])
-    assert minus_5000( (1606, 1183, 1592) ) in nds
-    assert minus_5000( (2146, 1430, 1286) ) in nds
-    assert minus_5000( (2146, 364, 1924)  ) in nds
-    assert minus_5000( (1958, 373, 1811)  ) in nds
-    assert minus_5000( (2294, 1143, 1696) ) in nds
-    assert minus_5000( (2482, 1134, 1809) ) in nds
-    assert minus_5000( (2003, 1461, 1491) ) in nds
+    # Add 5000 to each element to match up with expected values from example in paper
+    plus_5000 = lambda values: tuple([x + 5000 for x in values])
+    expected_nds = set([plus_5000(nd) for nd in nds])
+    assert (1606, 1183, 1592) in expected_nds
+    assert (2146, 1430, 1286) in expected_nds
+    assert (2146, 364, 1924)  in expected_nds
+    assert (1958, 373, 1811)  in expected_nds
+    assert (2294, 1143, 1696) in expected_nds
+    assert (2482, 1134, 1809) in expected_nds
+    assert (2003, 1461, 1491) in expected_nds
 
 
 def test_2KP50():
