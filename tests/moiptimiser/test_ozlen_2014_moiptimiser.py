@@ -118,12 +118,12 @@ def test_tamby_vanderpooten_paper():
     assert len(nds) == 7
     minus_5000 = lambda values: tuple([x - 5000 for x in values])
     assert minus_5000( (1606, 1183, 1592) ) in nds
-    assert minus_5000( (1958, 373, 1811)  ) in nds
-    assert minus_5000( (2003, 1461, 1491) ) in nds
     assert minus_5000( (2146, 1430, 1286) ) in nds
     assert minus_5000( (2146, 364, 1924)  ) in nds
+    assert minus_5000( (1958, 373, 1811)  ) in nds
     assert minus_5000( (2294, 1143, 1696) ) in nds
     assert minus_5000( (2482, 1134, 1809) ) in nds
+    assert minus_5000( (2003, 1461, 1491) ) in nds
 
 
 def test_2KP50():
