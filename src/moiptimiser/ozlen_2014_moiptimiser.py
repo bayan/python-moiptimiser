@@ -60,7 +60,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         for solution in vectors:
             if self._is_min() and not self._all_ge(bounds[depth:], solution[depth:]):
                 return False
-            if not self._is_min() and not self._all_le(bounds[depth:], solution[depth:]):
+            if self._is_max() and not self._all_le(bounds[depth:], solution[depth:]):
                 return False
         return True
 

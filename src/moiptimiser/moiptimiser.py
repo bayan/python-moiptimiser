@@ -15,6 +15,5 @@ class MOIPtimiser:
     def _is_min(self):
         return self._model.ModelSense == GRB.MINIMIZE
 
-
     def _is_max(self):
         return not self._is_min()
