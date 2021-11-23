@@ -154,10 +154,10 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         # First stage
         if self._is_min():
             constraint_sense = GRB.LESS_EQUAL
-            adjustment = -1
+            adjustment = -0.5
         else:
             constraint_sense = GRB.GREATER_EQUAL
-            adjustment = 1
+            adjustment = 0.5
         stage1_model = self._kth_obj_model(k)
         for i in range(self._model.NumObj):
             if i != k:
