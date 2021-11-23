@@ -19,3 +19,6 @@ class MOIPtimiser:
         model.Params.OutputFlag = 1
         model.display()
         model.Params.OutputFlag = 0
+
+    def _is_max(self):
+        return not self._is_min()
