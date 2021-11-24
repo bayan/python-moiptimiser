@@ -26,3 +26,9 @@ Changelog
 ------------------
 
 * New state of the art algorithm - two stage approach from (Tamby & Vanderpooten, 2020) - implemented and set as the default for the command line executable.
+
+
+0.0.4 (2021-11-24)
+------------------
+
+* Documentation and changelog changes that were missed in previous release.
