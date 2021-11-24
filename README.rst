@@ -87,6 +87,12 @@ To run the all tests run::
 
     tox
 
+To create a new patch and upload to github::
+
+    bumpversion patch
+    git push -u origin master
+    git push -u origin master vX.X.X
+
 To package and deploy to PyPI::
 
     python setup.py clean --all sdist bdist_wheel
