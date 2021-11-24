@@ -87,6 +87,11 @@ To run the all tests run::
 
     tox
 
+To package and deploy to PyPI::
+
+    python setup.py clean --all sdist bdist_wheel
+    twine upload --skip-existing dist/*.whl dist/*.gz
+
 
 References
 ==========
