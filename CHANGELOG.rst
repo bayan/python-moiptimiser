@@ -32,3 +32,9 @@ Changelog
 ------------------
 
 * Documentation and changelog changes that were missed in previous release.
+
+
+0.0.5 (2021-11-24)
+------------------
+
+* Specify python version to prevent failing documentation build on https://readthedocs.org/
