@@ -98,6 +98,11 @@ To package and deploy to PyPI::
     python setup.py clean --all sdist bdist_wheel
     twine upload --skip-existing dist/*.whl dist/*.gz
 
+To run as a script from the command line::
+
+    cd src/
+    python3 -m moiptimiser /path/to/example.lp
+
 
 References
 ==========
