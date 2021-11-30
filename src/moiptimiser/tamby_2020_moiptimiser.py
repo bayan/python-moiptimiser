@@ -1,4 +1,4 @@
-from moiptimiser.moiptimiser import *
+from moiptimiser.base import *
 import itertools
 
 class Tamby2020MOIPtimiser(MOIPtimiser):

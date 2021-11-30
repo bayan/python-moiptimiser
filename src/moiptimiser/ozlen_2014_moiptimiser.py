@@ -1,4 +1,4 @@
-from moiptimiser.moiptimiser import *
+from moiptimiser.base import *
 
 class Ozlen2014MOIPtimiser(MOIPtimiser):
 
