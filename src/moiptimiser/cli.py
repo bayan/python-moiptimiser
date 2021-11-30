@@ -18,10 +18,36 @@ import click
 
 from moiptimiser.impl import *
 
+class MoipAlgorithmClass(click.ParamType):
+    name = "Algorithm"
+
+    TAMBY2020 = 'tamby2020'
+    OZLEN2014 = 'ozlen2014'
+
+    lookup = {
+        TAMBY2020: Tamby2020MOIPtimiser,
+        OZLEN2014: Ozlen2014MOIPtimiser
+    }
+
+    valid_options = tuple(lookup.keys())
+
+    def convert(self, value, param, ctx):
+        if value not in self.valid_options:
+            self.fail(
+                f"'{value}' is not one of the valid multi-objective integer programming algorithm that have been implemented. " +
+                f"Please select one of the following valid options: {self.valid_options}.",
+                param,
+                ctx,
+            )
+        return self.lookup[value]
+
 @click.command(help='FILEPATH points to a multi-objective linear programming file using the LP format')
 @click.argument('filepath')
-def main(filepath):
-    moiptimiser = Tamby2020MOIPtimiser.from_lp_file(filepath)
+@click.option('-a','--algorithm', default=MoipAlgorithmClass.TAMBY2020,
+              help=f"Selected algorithm. Valid options are {MoipAlgorithmClass.valid_options}",
+              type=MoipAlgorithmClass())
+def main(filepath, algorithm):
+    moiptimiser = algorithm.from_lp_file(filepath)
     nds = moiptimiser.find_non_dominated_objective_vectors()
     for nd in nds:
         click.echo(repr(nd))
