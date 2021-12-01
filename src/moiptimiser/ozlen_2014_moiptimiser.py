@@ -80,7 +80,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
             return relaxation
 
         elif depth == 1:
-            self._model.optimize()
+            self._call_solver(self._model)
             nds = set() if self._is_infeasible() else {self._current_nd()}
             self._store_relaxation_in_cache(depth, self._current_bounds()[depth:], nds)
             return nds

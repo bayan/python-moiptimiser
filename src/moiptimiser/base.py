@@ -7,6 +7,7 @@ class MOIPtimiser:
 
     def __init__(self, model):
         self._model = model
+        self.num_solver_calls = 0
 
     @classmethod
     def from_lp_file(cls, filepath):
@@ -40,3 +41,7 @@ class MOIPtimiser:
             return set([self._correct_sign_for_solution(solution)
                         for solution in solutions])
         return solutions
+
+    def _call_solver(self, model):
+        self.num_solver_calls = self.num_solver_calls + 1
+        model.optimize()

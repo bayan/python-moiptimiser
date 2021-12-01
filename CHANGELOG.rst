@@ -44,3 +44,4 @@ Changelog
 ------------------
 
 * Specify which algorithm to use from the command line.
+* Keep track of the number of solver calls and report in output.

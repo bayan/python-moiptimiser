@@ -52,3 +52,4 @@ def main(filepath, algorithm):
     for nd in nds:
         click.echo(repr(nd))
     click.echo(f"{len(nds)} non dominated vectors found")
+    click.echo(f"{moiptimiser.num_solver_calls} calls to solver")

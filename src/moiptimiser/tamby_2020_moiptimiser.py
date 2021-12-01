@@ -112,7 +112,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         point = []
         for k in range(self._model.NumObj):
             kth_model = self._kth_obj_model(k)
-            kth_model.optimize()
+            self._call_solver(kth_model)
             point.append(int(kth_model.ObjNVal))
         self._ideal_point = tuple(point)
 
@@ -165,7 +165,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     new_expression.add(new_var, coeff)
                 # Alter u[i] because Gurobi does not support strict < inequality
                 stage1_model.addLConstr(new_expression, GRB.LESS_EQUAL, u[i] - 0.5)
-        stage1_model.optimize()
+        self._call_solver(stage1_model)
 
         # Second stage
         stage2_model = gp.Model()
@@ -205,7 +205,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _find_point(self, k, u):
         subproblem = self._construct_subproblem(k, u)
-        subproblem.optimize()
+        self._call_solver(subproblem)
         new_point = tuple(
             [self._eval_objective_given_model(subproblem, self._model.getObjective(i))
              for i in range(self._model.NumObj)]
