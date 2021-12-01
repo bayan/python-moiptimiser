@@ -254,7 +254,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     # Line 14
                     else:
                         # Line 15
-                        for u, y_k in V[(k)]:
+                        for u, y_k in V[k]:
                             # Line 16
                             if u_dash in U:
                                 kth_u_dash_projection = self._kth_projection(u_dash, k)
