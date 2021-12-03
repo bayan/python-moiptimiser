@@ -182,10 +182,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 coeff = other_objective.getCoeff(j)
                 new_var = stage1_model.getVarByName(var.VarName)
                 new_expression.add(new_var, coeff)
-                if i != k:
-                    if var.VarName not in coefficient_dict:
-                        coefficient_dict[var.VarName] = 0
-                    coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
+                if var.VarName not in coefficient_dict:
+                    coefficient_dict[var.VarName] = 0
+                coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
             if i == k:
                 rhs = int(stage1_model.ObjNVal)
                 constraint_sense = GRB.EQUAL
