@@ -113,7 +113,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         for k in range(self._model.NumObj):
             kth_model = self._kth_obj_model(k)
             self._call_solver(kth_model)
-            point.append(int(kth_model.ObjNVal))
+            point.append(round(kth_model.ObjNVal))
         self._ideal_point = tuple(point)
 
     def _hypervolume_of_projection(self, k, u):
@@ -142,7 +142,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             coeff = expression.getCoeff(i)
             value = vals_by_name[var.VarName]
             total = total + coeff * value
-        return int(total)
+        return round(total)
 
     def _eval_objective_given_model(self, model, objective):
         return self._eval_linexpr_for_values(objective, self._var_values_by_name_dict(model))
@@ -186,7 +186,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     coefficient_dict[var.VarName] = 0
                 coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
             if i == k:
-                rhs = int(stage1_model.ObjNVal)
+                rhs = round(stage1_model.ObjNVal)
                 constraint_sense = GRB.EQUAL
             else:
                 rhs = self._eval_objective_given_model(stage1_model, self._model.getObjective(i))
