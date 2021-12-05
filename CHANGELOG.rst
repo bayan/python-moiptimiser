@@ -52,3 +52,4 @@ Changelog
 ------------------
 
 * Provide feasible solutions to solver for (Tamby & Vanderpooten, 2020) implementation.
+* Lower required python version number from 3.9 to 3.7 to get online docs compiling.
