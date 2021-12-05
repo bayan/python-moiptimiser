@@ -105,12 +105,16 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         for varname in values:
             model.getVarByName(varname).setAttr(GRB.Attr.Start, values[varname])
 
-    def _kth_obj_model(self, k):
-        new_model = gp.Model(f"objective-{k}")
+    def _new_empty_objective_model(self):
+        new_model = gp.Model()
         new_model.Params.OutputFlag = 0  # Suppress console output
         self._copy_vars_to(self._model, new_model)
-        self._copy_objective_to(self._model, new_model, k, 0)
         self._copy_constraints_to(self._model, new_model)
+        return new_model
+
+    def _kth_obj_model(self, k):
+        new_model = self._new_empty_objective_model()
+        self._copy_objective_to(self._model, new_model, k, 0)
         return new_model
 
     def _init_ideal_point(self):
@@ -152,64 +156,75 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _eval_objective_given_model(self, model, objective):
         return self._eval_linexpr_for_values(objective, self._var_values_by_name_dict(model))
 
-    def _construct_subproblem(self, k, u):
-        # For the Two-Stage Approach, solve the first sub problem and return the second stage.
-        # For the Direct Approach, return the weighted single objective problem.
-        # First, we implement the Two-Stage Approach.
-
-        # First stage
-        stage1_model = self._kth_obj_model(k)
-        for i in range(self._model.NumObj):
-            if i != k:
-                other_objective = self._model.getObjective(i)
-                new_expression = gp.LinExpr()
-                for j in range(other_objective.size()):
-                    var = other_objective.getVar(j)
-                    coeff = other_objective.getCoeff(j)
-                    new_var = stage1_model.getVarByName(var.VarName)
-                    new_expression.add(new_var, coeff)
-                # Alter u[i] because Gurobi does not support strict < inequality
-                stage1_model.addLConstr(new_expression, GRB.LESS_EQUAL, u[i] - 0.5)
+    def _find_and_set_start_values(self, model, k, u):
         if (k,u) in self._defining_points:
             N_ku = self._defining_points[(k,u)]
             if len(N_ku) > 0:
                 feasible_nd = list(N_ku)[0]
                 if feasible_nd in self._decision_variable_map:
                     feasible_variables = self._decision_variable_map[feasible_nd]
-                    self._set_start_values(stage1_model, feasible_variables)
-        self._call_solver(stage1_model)
+                    self._set_start_values(model, feasible_variables)
 
-        # Second stage
-        stage2_model = gp.Model()
-        stage2_model.Params.OutputFlag = 0  # Suppress console output
-        self._copy_vars_to(self._model, stage2_model)
-        self._copy_constraints_to(self._model, stage2_model)
+    def _set_other_objectives_as_constraints(self, model, k, u, strict_inequality=True):
+        for i in range(self._model.NumObj):
+            if i != k:
+                other_objective = self._model.getObjective(i)
+                new_expression = self._new_expression_from_objective(model, other_objective)
+                try:
+                    rhs = u[i] - 0.5 if strict_inequality else u[i]
+                except Exception as e:
+                    breakpoint()
+                    1
+                model.addLConstr(new_expression, GRB.LESS_EQUAL, rhs)
 
+    def _new_expression_from_objective(self, model, objective):
+        new_expression = gp.LinExpr()
+        for j in range(objective.size()):
+            var = objective.getVar(j)
+            coeff = objective.getCoeff(j)
+            new_var = model.getVarByName(var.VarName)
+            new_expression.add(new_var, coeff)
+        return new_expression
+
+    def _summed_expression_from_objectives(self, model, weights):
         coefficient_dict = {}
         for i in range(self._model.NumObj):
-            other_objective = self._model.getObjective(i)
-            new_expression = gp.LinExpr()
-            for j in range(other_objective.size()):
-                var = other_objective.getVar(j)
-                coeff = other_objective.getCoeff(j)
-                new_var = stage1_model.getVarByName(var.VarName)
-                new_expression.add(new_var, coeff)
+            objective = self._model.getObjective(i)
+            for j in range(objective.size()):
+                var = objective.getVar(j)
+                coeff = objective.getCoeff(j) * weights[i]
                 if var.VarName not in coefficient_dict:
                     coefficient_dict[var.VarName] = 0
                 coefficient_dict[var.VarName] = coefficient_dict[var.VarName] + coeff
-            if i == k:
-                rhs = round(stage1_model.ObjNVal)
-                constraint_sense = GRB.EQUAL
-            else:
-                rhs = self._eval_objective_given_model(stage1_model, self._model.getObjective(i))
-                constraint_sense = GRB.LESS_EQUAL
-            stage2_model.addLConstr(new_expression, constraint_sense, rhs)
-
-        # Set the objective for the stage 2 model
         summed_expression = gp.LinExpr()
         for varname in coefficient_dict:
-            new_var = stage2_model.getVarByName(varname)
+            new_var = model.getVarByName(varname)
             summed_expression.add(new_var, coefficient_dict[varname])
+        return summed_expression
+
+    def _upper_bounds_from_solved_model(self, model):
+        upper_bounds = []
+        for i in range(self._model.NumObj):
+            upper_bounds.append(self._eval_objective_given_model(model, self._model.getObjective(i)))
+        return tuple(upper_bounds)
+
+    def _construct_subproblem(self, k, u):
+        # Two-Stage Approach: Solve the first sub problem and return the second stage.
+
+        # First stage
+        stage1_model = self._kth_obj_model(k)
+        self._set_other_objectives_as_constraints(stage1_model, k, u)
+        self._find_and_set_start_values(stage1_model, k, u)
+        self._call_solver(stage1_model)
+
+        # Second stage
+        stage2_model = self._new_empty_objective_model()
+        upper_bounds = self._upper_bounds_from_solved_model(stage1_model)
+        self._set_other_objectives_as_constraints(stage2_model, k, upper_bounds, strict_inequality=False)
+        new_expression = self._new_expression_from_objective(self._model, self._model.getObjective(k))
+        stage2_model.addLConstr(new_expression, GRB.EQUAL, round(stage1_model.ObjNVal))
+        weights = [1] * self._model.NumObj
+        summed_expression = self._summed_expression_from_objectives(stage2_model, weights)
         stage2_model.setObjective(summed_expression)
         self._set_start_values(stage2_model, self._var_values_by_name_dict(stage1_model))
         stage2_model.update()
