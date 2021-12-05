@@ -242,7 +242,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         while len(U) > 0:
             # Line 4
             k, u = self._next_k_u(U)
-            # Line 5 - but without specifying a starting solution for now
+            # Line 5
             new_point, decision_variables = self._find_point(k, u)
             self._decision_variable_map[new_point] = decision_variables
             # Line 6
