@@ -58,7 +58,7 @@ setup(
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
-    python_requires='>=3.9',
+    python_requires='>=3.7',
     install_requires=[
         'click',
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
