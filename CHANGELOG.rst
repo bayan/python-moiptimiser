@@ -40,9 +40,15 @@ Changelog
 * Specify python version to prevent failing documentation build on https://readthedocs.org/
 
 
-0.0.6 (2021-11-24)
+0.0.6 (2021-12-05)
 ------------------
 
 * Specify which algorithm to use from the command line.
 * Keep track of the number of solver calls and report in output.
 * Bug fixes to (Tamby & Vanderpooten, 2020) implementation.
+
+
+0.0.7 (2021-12-05)
+------------------
+
+* Provide feasible solutions to solver for (Tamby & Vanderpooten, 2020) implementation.

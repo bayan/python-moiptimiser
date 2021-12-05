@@ -7,6 +7,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         super().__init__(model)
         self._convert_to_min_problem()
         self._defining_points = dict()
+        self._decision_variable_map = dict()
         self._init_M()
         self._init_ideal_point()
 
@@ -100,6 +101,10 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             target.addLConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
         target.update()
 
+    def _set_start_values(self, model, values):
+        for varname in values:
+            model.getVarByName(varname).setAttr(GRB.Attr.Start, values[varname])
+
     def _kth_obj_model(self, k):
         new_model = gp.Model(f"objective-{k}")
         new_model.Params.OutputFlag = 0  # Suppress console output
@@ -165,6 +170,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     new_expression.add(new_var, coeff)
                 # Alter u[i] because Gurobi does not support strict < inequality
                 stage1_model.addLConstr(new_expression, GRB.LESS_EQUAL, u[i] - 0.5)
+        if (k,u) in self._defining_points:
+            N_ku = self._defining_points[(k,u)]
+            if len(N_ku) > 0:
+                feasible_nd = list(N_ku)[0]
+                if feasible_nd in self._decision_variable_map:
+                    feasible_variables = self._decision_variable_map[feasible_nd]
+                    self._set_start_values(stage1_model, feasible_variables)
         self._call_solver(stage1_model)
 
         # Second stage
@@ -199,6 +211,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             new_var = stage2_model.getVarByName(varname)
             summed_expression.add(new_var, coefficient_dict[varname])
         stage2_model.setObjective(summed_expression)
+        self._set_start_values(stage2_model, self._var_values_by_name_dict(stage1_model))
         stage2_model.update()
         return stage2_model
 
@@ -209,7 +222,8 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             [self._eval_objective_given_model(subproblem, self._model.getObjective(i))
              for i in range(self._model.NumObj)]
         )
-        return new_point
+        decision_variables = self._var_values_by_name_dict(subproblem)
+        return (new_point, decision_variables)
 
     # Algorithm 2
     def find_non_dominated_objective_vectors(self):
@@ -229,7 +243,8 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             # Line 4
             k, u = self._next_k_u(U)
             # Line 5 - but without specifying a starting solution for now
-            new_point = self._find_point(k, u)
+            new_point, decision_variables = self._find_point(k, u)
+            self._decision_variable_map[new_point] = decision_variables
             # Line 6
             V[k].add( (u, new_point[k]) )
 
