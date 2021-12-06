@@ -1,7 +1,5 @@
 from moiptimiser.tamby_2020_direct_moiptimiser import Tamby2020DirectMOIPtimiser
 
-import pytest
-
 def test_2AP05():
     optimiser = Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/2AP05.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
@@ -208,7 +206,6 @@ def test_4KP10():
     assert (357, 226, 378, 412) in nds
 
 
-@pytest.mark.skip(reason="Too slow")
 def test_3AP_15_1():
     optimiser = Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/3AP-15-1.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
