@@ -58,5 +58,5 @@ Changelog
 0.0.8 (2021-12-06)
 ------------------
 
-* Finally got `the documentation<https://python-moiptimiser.readthedocs.io/en/latest/>`_ compiling on https://readthedocs.org/
+* Finally got `the documentation <https://python-moiptimiser.readthedocs.io/en/latest/>`_ compiling on https://readthedocs.org/
 * Implemented direct strategy from (Tamby & Vanderpooten, 2020).
