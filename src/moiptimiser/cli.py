@@ -21,11 +21,13 @@ from moiptimiser.impl import *
 class MoipAlgorithmClass(click.ParamType):
     name = "Algorithm"
 
-    TAMBY2020 = 'tamby2020'
+    TAMBY2020_TWO_STAGE = 'tamby2020-two-stage'
+    TAMBY2020_DIRECT = 'tamby2020-direct'
     OZLEN2014 = 'ozlen2014'
 
     lookup = {
-        TAMBY2020: Tamby2020MOIPtimiser,
+        TAMBY2020_TWO_STAGE: Tamby2020TwoStageMOIPtimiser,
+        TAMBY2020_DIRECT: Tamby2020DirectMOIPtimiser,
         OZLEN2014: Ozlen2014MOIPtimiser
     }
 
@@ -43,7 +45,7 @@ class MoipAlgorithmClass(click.ParamType):
 
 @click.command(help='FILEPATH points to a multi-objective linear programming file using the LP format')
 @click.argument('filepath')
-@click.option('-a','--algorithm', default=MoipAlgorithmClass.TAMBY2020,
+@click.option('-a','--algorithm', default=MoipAlgorithmClass.TAMBY2020_TWO_STAGE,
               help=f"Selected algorithm. Valid options are {MoipAlgorithmClass.valid_options}",
               type=MoipAlgorithmClass())
 def main(filepath, algorithm):
