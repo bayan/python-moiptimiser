@@ -26,12 +26,14 @@ export TIMEFMT='%E'
 { time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/4KP10.lp | sort > runs/tbout-two-stage/4KP10.txt ) ; } 2>> runs/tbout-two-stage/times.txt
 
 { time ( python3 -m moiptimiser -a ozlen2014 ../tests/examples/ozlen_2014_paper.as.max.lp | sort > runs/ozout/ozlen_2014_paper.as.max.txt ) ; } 2>> runs/ozout/times.txt
-{ time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/ozlen_2014_paper.as.max.lp | sort > runs/tbout-direct/ozlen_2014_paper.as.max.txt ) ; } 2>> runs/tbout-direct/times.tx{ time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/ozlen_2014_paper.as.max.lp | sort > runs/tbout-two-stage/ozlen_2014_paper.as.max.txt ) ; } 2>> runs/tbout-two-stage/times.txt
+{ time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/ozlen_2014_paper.as.max.lp | sort > runs/tbout-direct/ozlen_2014_paper.as.max.txt ) ; } 2>> runs/tbout-direct/times.txt
+{ time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/ozlen_2014_paper.as.max.lp | sort > runs/tbout-two-stage/ozlen_2014_paper.as.max.txt ) ; } 2>> runs/tbout-two-stage/times.txt
 { time ( python3 -m moiptimiser -a ozlen2014 ../tests/examples/ozlen_2014_paper.lp | sort > runs/ozout/ozlen_2014_paper.txt ) ; } 2>> runs/ozout/times.txt
 { time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/ozlen_2014_paper.lp | sort > runs/tbout-direct/ozlen_2014_paper.txt ) ; } 2>> runs/tbout-direct/times.txt
 { time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/ozlen_2014_paper.lp | sort > runs/tbout-two-stage/ozlen_2014_paper.txt ) ; } 2>> runs/tbout-two-stage/times.txt
 { time ( python3 -m moiptimiser -a ozlen2014 ../tests/examples/tamby_vanderpooten_2020.lp | sort > runs/ozout/tamby_vanderpooten_2020.txt ) ; } 2>> runs/ozout/times.txt
-{ time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/tamby_vanderpooten_2020.lp | sort > runs/tbout-direct/tamby_vanderpooten_2020.txt ) ; } 2>> runs/tbout-direct/times.tx{ time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/tamby_vanderpooten_2020.lp | sort > runs/tbout-two-stage/tamby_vanderpooten_2020.txt ) ; } 2>> runs/tbout-two-stage/times.txt
+{ time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/tamby_vanderpooten_2020.lp | sort > runs/tbout-direct/tamby_vanderpooten_2020.txt ) ; } 2>> runs/tbout-direct/times.txt
+{ time ( python3 -m moiptimiser -a tamby2020-two-stage ../tests/examples/tamby_vanderpooten_2020.lp | sort > runs/tbout-two-stage/tamby_vanderpooten_2020.txt ) ; } 2>> runs/tbout-two-stage/times.txt
 
 { time ( python3 -m moiptimiser -a ozlen2014 ../tests/examples/3AP-10-1.lp | sort > runs/ozout/3AP-10-1.txt ) ; } 2>> runs/ozout/times.txt
 { time ( python3 -m moiptimiser -a tamby2020-direct ../tests/examples/3AP-10-1.lp | sort > runs/tbout-direct/3AP-10-1.txt ) ; } 2>> runs/tbout-direct/times.txt
