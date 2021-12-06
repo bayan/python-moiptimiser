@@ -732,3 +732,61 @@ def test_ideal_point():
     assert(Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/2KP50.lp')._ideal_point) == (-2414, -2450)
     assert(Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/3KP10.lp')._ideal_point) == (-474, -336, -410)
     assert(Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/4KP10.lp')._ideal_point) == (-474, -336, -410, -524)
+
+
+def test_weak_non_dominated_vectors():
+    optimiser = Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/2AP05.lp')
+
+    set_including_weak_vectors = set([
+        # Nondominated
+        (41, 37, 31),
+        (23, 46, 43),
+        (34, 29, 44),
+        (50, 24, 44),
+        (28, 40, 43),
+        (30, 31, 39),
+        (31, 30, 34),
+        (28, 48, 35),
+        (39, 28, 53),
+        (21, 55, 47),
+        (27, 36, 58),
+        (24, 45, 38),
+
+        # Dominated
+        (41, 39, 32),
+        (40, 46, 43),
+        (35, 35, 44),
+        (51, 24, 45),
+        (28, 50, 44),
+        (38, 31, 40),
+        (50, 60, 70),
+        (38, 48, 58),
+        (39, 28, 54)
+    ])
+
+    filtered = optimiser._remove_dominated(set_including_weak_vectors)
+
+    assert len(filtered) == 12
+
+    assert (41, 37, 31) in filtered
+    assert (23, 46, 43) in filtered
+    assert (34, 29, 44) in filtered
+    assert (50, 24, 44) in filtered
+    assert (28, 40, 43) in filtered
+    assert (30, 31, 39) in filtered
+    assert (31, 30, 34) in filtered
+    assert (28, 48, 35) in filtered
+    assert (39, 28, 53) in filtered
+    assert (21, 55, 47) in filtered
+    assert (27, 36, 58) in filtered
+    assert (24, 45, 38) in filtered
+
+    assert (41, 39, 32) not in filtered
+    assert (40, 46, 43) not in filtered
+    assert (35, 35, 44) not in filtered
+    assert (51, 24, 45) not in filtered
+    assert (28, 50, 44) not in filtered
+    assert (38, 31, 40) not in filtered
+    assert (50, 60, 70) not in filtered
+    assert (38, 48, 58) not in filtered
+    assert (39, 28, 54) not in filtered

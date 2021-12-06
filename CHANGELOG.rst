@@ -53,3 +53,10 @@ Changelog
 
 * Provide feasible solutions to solver for (Tamby & Vanderpooten, 2020) implementation.
 * Lower required python version number from 3.9 to 3.7 to get online docs compiling.
+
+
+0.0.8 (2021-12-06)
+------------------
+
+* Finally got `the documentation<https://python-moiptimiser.readthedocs.io/en/latest/>`_ compiling on https://readthedocs.org/
+* Implemented direct strategy from (Tamby & Vanderpooten, 2020).

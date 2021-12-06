@@ -23,6 +23,10 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def weakly_dominates(self, left, right):
         return all((x <= y for x, y in zip(left, right)))
 
+    def dominates(self, left, right):
+        if left == right: return False
+        return self.weakly_dominates(left, right)
+
     # Algorithm 1
     def _update_search_region(self, new_point, search_region):
         # Output
@@ -218,6 +222,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         decision_variables = self._var_values_by_name_dict(subproblem)
         return (new_point, decision_variables)
 
+    def _remove_dominated(self, nds):
+        filtered = set()
+        for nd in nds:
+            if not any( (self.dominates(other, nd) for other in nds) ):
+                filtered.add(nd)
+        return filtered
+
     # Algorithm 2
     def find_non_dominated_objective_vectors(self):
         # Line 1
@@ -271,4 +282,4 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                                     # Line 17
                                     U.remove(u_dash)
         # Line 18
-        return self._correct_sign_for_solutions(N)
+        return self._correct_sign_for_solutions(self._remove_dominated(N))
