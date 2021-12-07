@@ -17,12 +17,6 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
                 constraint = self._model.addLConstr(objective, '>', -GRB.INFINITY)
             self._objective_constraints.append(constraint)
 
-    def _is_feasible(self):
-        return self._model.getAttr('Status') == GRB.OPTIMAL
-
-    def _is_infeasible(self):
-        return not self._is_feasible()
-
     def _current_nd(self):
         nd = []
         for i in range(self._model.NumObj):

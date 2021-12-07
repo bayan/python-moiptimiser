@@ -8,12 +8,21 @@ class MOIPtimiser:
     def __init__(self, model):
         self._model = model
         self.num_solver_calls = 0
+        self.num_infeasible = 0
 
     @classmethod
     def from_lp_file(cls, filepath):
         model = gp.read(filepath)
         model.Params.OutputFlag = 0  # Suppress console output
         return cls(model)
+
+    def _is_feasible(self, model=None):
+        if model is None:
+            model = self._model
+        return model.getAttr('Status') == GRB.OPTIMAL
+
+    def _is_infeasible(self, model=None):
+        return not self._is_feasible(model)
 
     def _is_min(self):
         return self._model.ModelSense == GRB.MINIMIZE
@@ -45,3 +54,5 @@ class MOIPtimiser:
     def _call_solver(self, model):
         self.num_solver_calls = self.num_solver_calls + 1
         model.optimize()
+        if self._is_infeasible(model):
+            self.num_infeasible = self.num_infeasible + 1

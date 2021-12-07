@@ -51,7 +51,8 @@ class MoipAlgorithmClass(click.ParamType):
 def main(filepath, algorithm):
     moiptimiser = algorithm.from_lp_file(filepath)
     nds = moiptimiser.find_non_dominated_objective_vectors()
+    click.echo(f"Solver calls: {moiptimiser.num_solver_calls}")
+    click.echo(f"Infeasible problems: {moiptimiser.num_infeasible}")
     for nd in nds:
         click.echo(repr(nd))
     click.echo(f"Non-dominated vectors found: {len(nds)}")
-    click.echo(f"Solver calls: {moiptimiser.num_solver_calls}")
