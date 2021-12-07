@@ -14,7 +14,7 @@ Why does this file exist, and why not put this in __main__?
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
-import click
+import click, time
 
 from moiptimiser.impl import *
 
@@ -49,10 +49,13 @@ class MoipAlgorithmClass(click.ParamType):
               help=f"Selected algorithm. Valid options are {MoipAlgorithmClass.valid_options}",
               type=MoipAlgorithmClass())
 def main(filepath, algorithm):
+    tick = time.perf_counter()
     moiptimiser = algorithm.from_lp_file(filepath)
     nds = moiptimiser.find_non_dominated_objective_vectors()
+    tock = time.perf_counter()
     click.echo(f"Solver calls: {moiptimiser.num_solver_calls}")
     click.echo(f"Infeasible problems: {moiptimiser.num_infeasible}")
+    click.echo(f"CPU Time: {tock - tick:0.3} seconds")
     for nd in nds:
         click.echo(repr(nd))
     click.echo(f"Non-dominated vectors found: {len(nds)}")
