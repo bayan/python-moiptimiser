@@ -60,3 +60,10 @@ Changelog
 
 * Finally got `the documentation <https://python-moiptimiser.readthedocs.io/en/latest/>`_ compiling on https://readthedocs.org/
 * Implemented direct strategy from (Tamby & Vanderpooten, 2020).
+
+
+0.0.9 (2021-12-07)
+------------------
+
+* Track and report the number of infeasible problems attempted.
+* Converted examples from `William Pettersson on figshare <https://figshare.com/authors/_/3770188>`_ to be used for testing algorithms and benchmarking.
