@@ -20,7 +20,7 @@ project = 'moiptimiser'
 year = '2020'
 author = 'Bayan Khalili'
 copyright = '{0}, {1}'.format(year, author)
-version = release = '0.0.8'
+version = release = '0.0.9'
 
 pygments_style = 'trac'
 templates_path = ['.']
