@@ -207,7 +207,7 @@ def test_4KP10():
 
 
 def test_3AP_15_1():
-    optimiser = Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/3AP-15-1.lp')
+    optimiser = Tamby2020DirectMOIPtimiser.from_lp_file('tests/examples/peterson_ozlen_2017_examples/AP3_Tests/3AP-15-1.lp')
     nds = optimiser.find_non_dominated_objective_vectors()
     assert len(nds) == 506
     assert (100, 34, 102) in nds
