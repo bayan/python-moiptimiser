@@ -53,7 +53,7 @@ However, due to the importance of such functionality, much research has been inv
 
 This python package extends Gurobi's multi-objective functionality by using the algorithms developed by (Ozlen et al., 2014) and (Tamby & Vanderpooten, 2020). It provides a module that can be used in python programs, as well as a command line tool that can read `multi-objective LP <https://www.gurobi.com/documentation/9.5/refman/lp_format.html>`_ files.
 
-
+Many of the examples found in this project have been converted from the examples `shared by William Pettersson on figshare <https://figshare.com/authors/_/3770188>`_, which were used to benchmark the parallel processing algorithm described in (Pettersson & Ozlen, 2019).
 
 * Free software: MIT license
 
@@ -108,5 +108,7 @@ References
 ==========
 
 Ozlen, M., Burton, B.A., MacRae, C.A.G., 2014. Multi-Objective Integer Programming: An Improved Recursive Algorithm. J Optim Theory Appl 160, 470–482. https://doi.org/10.1007/s10957-013-0364-y
+
+Pettersson, W., & Ozlen, M. (2019). Multiobjective Integer Programming: Synergistic Parallel Approaches. INFORMS Journal on Computing, 32(2), 461–472. https://doi.org/10.1287/ijoc.2018.0875
 
 Tamby, S., & Vanderpooten, D. (2020). Enumeration of the Nondominated Set of Multiobjective Discrete Optimization Problems. INFORMS Journal on Computing, 33(1), 72–85. https://doi.org/10.1287/ijoc.2020.0953
