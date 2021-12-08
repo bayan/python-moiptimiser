@@ -74,3 +74,9 @@ Changelog
 
 * Fixed rounding bug in (Ozlen et al., 2014).
 * Minor code clean up and documentation updates.
+
+
+0.0.11 (2021-12-08)
+-------------------
+
+* Documentation bug fix.
