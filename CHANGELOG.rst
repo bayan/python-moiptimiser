@@ -67,3 +67,10 @@ Changelog
 
 * Track and report the number of infeasible problems attempted.
 * Converted examples from `William Pettersson on figshare <https://figshare.com/authors/_/3770188>`_ to be used for testing algorithms and benchmarking.
+
+
+0.0.10 (2021-12-08)
+------------------
+
+* Fixed rounding bug in (Ozlen et al., 2014).
+* Minor code clean up and documentation updates.
