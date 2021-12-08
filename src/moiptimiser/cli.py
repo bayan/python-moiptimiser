@@ -55,7 +55,7 @@ def main(filepath, algorithm):
     tock = time.perf_counter()
     click.echo(f"Solver calls: {moiptimiser.num_solver_calls}")
     click.echo(f"Infeasible problems: {moiptimiser.num_infeasible}")
-    click.echo(f"CPU Time: {tock - tick:0.3} seconds")
+    click.echo(f"CPU Time: {tock - tick} seconds")
     for nd in nds:
         click.echo(repr(nd))
     click.echo(f"Non-dominated vectors found: {len(nds)}")
