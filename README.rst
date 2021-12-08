@@ -35,9 +35,9 @@ Overview
     :alt: Supported implementations
     :target: https://pypi.org/project/moiptimiser
 
-.. |commits-since| image:: https://img.shields.io/github/commits-since/bayan/python-moiptimiser/v0.0.10.svg
+.. |commits-since| image:: https://img.shields.io/github/commits-since/bayan/python-moiptimiser/v0.0.11.svg
     :alt: Commits since latest release
-    :target: https://github.com/bayan/python-moiptimiser/compare/v0.0.10...master
+    :target: https://github.com/bayan/python-moiptimiser/compare/v0.0.11...master
 
 
 
