@@ -70,7 +70,7 @@ Changelog
 
 
 0.0.10 (2021-12-08)
-------------------
+-------------------
 
 * Fixed rounding bug in (Ozlen et al., 2014).
 * Minor code clean up and documentation updates.
