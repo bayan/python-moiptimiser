@@ -174,11 +174,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             if i != k:
                 other_objective = self._model.getObjective(i)
                 new_expression = self._new_expression_from_objective(model, other_objective)
-                try:
-                    rhs = u[i] - 0.5 if strict_inequality else u[i]
-                except Exception as e:
-                    breakpoint()
-                    1
+                rhs = u[i] - 0.5 if strict_inequality else u[i]
                 model.addLConstr(new_expression, GRB.LESS_EQUAL, rhs)
 
     def _new_expression_from_objective(self, model, objective):
