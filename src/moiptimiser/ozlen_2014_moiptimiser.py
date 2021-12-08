@@ -21,7 +21,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         nd = []
         for i in range(self._model.NumObj):
             self._model.params.ObjNumber = i
-            nd.append(int(self._model.ObjNVal))
+            nd.append(round(self._model.ObjNVal))
         return tuple(nd)
 
     def _current_bounds(self):
