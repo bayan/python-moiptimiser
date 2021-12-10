@@ -4,14 +4,19 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
         super().__init__(model)
+        self._set_sense()
         self._init_bound_constraints()
         self._relaxation_cache = {}
+
+    def _set_sense(self):
+        self._is_min = self._model.ModelSense == GRB.MINIMIZE
+        self._is_max = not self._is_min
 
     def _init_bound_constraints(self):
         self._objective_constraints = []
         for i in range(self._model.NumObj):
             objective = self._model.getObjective(i)
-            if self._is_min():
+            if self._is_min:
                 constraint = self._model.addLConstr(objective, '<', GRB.INFINITY)
             else:
                 constraint = self._model.addLConstr(objective, '>', -GRB.INFINITY)
@@ -45,16 +50,16 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     # True if left is relaxation of the right
     def _is_relaxation(self, left, right):
-        if self._is_min():
+        if self._is_min:
             return right != left and self._all_ge(left, right)
         else:
             return right != left and self._all_le(left, right)
 
     def _are_feasible_vectors_at_depth(self, bounds, vectors, depth):
         for solution in vectors:
-            if self._is_min() and not self._all_ge(bounds[depth:], solution[depth:]):
+            if self._is_min and not self._all_ge(bounds[depth:], solution[depth:]):
                 return False
-            if self._is_max() and not self._all_le(bounds[depth:], solution[depth:]):
+            if self._is_max and not self._all_le(bounds[depth:], solution[depth:]):
                 return False
         return True
 
@@ -81,7 +86,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
         else:
             nds = set()
-            new_bound = GRB.INFINITY if self._is_min() else -GRB.INFINITY
+            new_bound = GRB.INFINITY if self._is_min else -GRB.INFINITY
             while True:
                 self._objective_constraints[depth-1].rhs = new_bound
                 self._model.update()
@@ -90,7 +95,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
                     self._store_relaxation_in_cache(depth, self._current_bounds()[depth:], nds)
                     return nds
                 nds = nds.union(new_nds)
-                if self._is_min():
+                if self._is_min:
                     new_bound = max([nd[depth-1] for nd in new_nds]) - 1
                 else:
                     new_bound = min([nd[depth-1] for nd in new_nds]) + 1

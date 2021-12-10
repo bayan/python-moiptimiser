@@ -24,14 +24,8 @@ class MOIPtimiser:
     def _is_infeasible(self, model=None):
         return not self._is_feasible(model)
 
-    def _is_min(self):
-        return self._model.ModelSense == GRB.MINIMIZE
-
-    def _is_max(self):
-        return not self._is_min()
-
     def _convert_to_min_problem(self):
-        if self._is_max():
+        if self._model.ModelSense == GRB.MAXIMIZE:
             self._converted_from_max_problem = True
             self._model.ModelSense = GRB.MINIMIZE
             for i in range(self._model.NumObj):
