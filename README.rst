@@ -83,9 +83,14 @@ Install python libraries::
 
     pip install cmake dlib gurobipy tox twine wheel bumpversion
 
-To run the all tests run::
+To run the all tests and checks run::
 
     tox
+
+To run the all python automated tests run::
+
+    tox -e py39
+
 
 To create a new patch and upload to github::
 
