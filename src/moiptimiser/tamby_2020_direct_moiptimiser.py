@@ -4,7 +4,7 @@ class Tamby2020DirectMOIPtimiser(Tamby2020MOIPtimiser):
 
     def _delta_for_direct(self, k, u):
         delta = 1
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             if i != k:
                 delta = delta + u[i] - self._ideal_point[i]
         return delta
@@ -13,7 +13,7 @@ class Tamby2020DirectMOIPtimiser(Tamby2020MOIPtimiser):
         # Direct Approach
         model = self._new_empty_objective_model()
         self._set_other_objectives_as_constraints(model, k, u)
-        weights = [1] * self._model.NumObj
+        weights = [1] * self._num_obj
         weights[k] = self._delta_for_direct(k, u)
         summed_expression = self._summed_expression_from_objectives(model, weights)
         model.setObjective(summed_expression)

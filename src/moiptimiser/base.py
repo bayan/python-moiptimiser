@@ -7,6 +7,7 @@ class MOIPtimiser:
 
     def __init__(self, model):
         self._model = model
+        self._num_obj = model.NumObj
         self.num_solver_calls = 0
         self.num_infeasible = 0
 
@@ -28,7 +29,7 @@ class MOIPtimiser:
         if self._model.ModelSense == GRB.MAXIMIZE:
             self._converted_from_max_problem = True
             self._model.ModelSense = GRB.MINIMIZE
-            for i in range(self._model.NumObj):
+            for i in range(self._num_obj):
                 self._model.setObjectiveN(-self._model.getObjective(i), i)
             self._model.update()
         else:

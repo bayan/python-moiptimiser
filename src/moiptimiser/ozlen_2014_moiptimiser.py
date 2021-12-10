@@ -14,7 +14,7 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     def _init_bound_constraints(self):
         self._objective_constraints = []
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             objective = self._model.getObjective(i)
             if self._is_min:
                 constraint = self._model.addLConstr(objective, '<', GRB.INFINITY)
@@ -24,14 +24,14 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     def _current_nd(self):
         nd = []
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             self._model.params.ObjNumber = i
             nd.append(round(self._model.ObjNVal))
         return tuple(nd)
 
     def _current_bounds(self):
         bounds = []
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             bounds.append(self._objective_constraints[i].rhs)
         return tuple(bounds)
 
@@ -101,5 +101,5 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
                     new_bound = min([nd[depth-1] for nd in new_nds]) + 1
 
     def find_non_dominated_objective_vectors(self):
-        nds = self._find_non_dominated_objective_vectors(self._model.NumObj)
+        nds = self._find_non_dominated_objective_vectors(self._num_obj)
         return nds

@@ -38,13 +38,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 # Line 4
                 new_search_region.remove(u)
                 # Line 5
-                for l in range(self._model.NumObj):
+                for l in range(self._num_obj):
                     # Line 6
                     ul = list(u)
                     ul[l] = new_point[l]
                     ul = tuple(ul)
                     # Line 7
-                    for k in range(self._model.NumObj):
+                    for k in range(self._num_obj):
                         new_defining_points = set()
                         if k != l:
                             # Line 8
@@ -57,7 +57,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     self._defining_points[(l,ul)] = set([new_point])
                     # Line 10
                     valid_defining_point_exists = True
-                    for k in range(self._model.NumObj):
+                    for k in range(self._num_obj):
                         if k != l:
                             if ul[k] != self._M:
                                 if len(self._defining_points[(k, ul)]) == 0:
@@ -68,7 +68,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                         new_search_region.add(ul)
             # Line 12
             else:
-                for k in range(self._model.NumObj):
+                for k in range(self._num_obj):
                     if new_point[k] == u[k]:
                         kth_new_point_projection = self._kth_projection(new_point, k)
                         kth_u_projection = self._kth_projection(u, k)
@@ -123,7 +123,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _init_ideal_point(self):
         point = []
-        for k in range(self._model.NumObj):
+        for k in range(self._num_obj):
             kth_model = self._kth_obj_model(k)
             self._call_solver(kth_model)
             point.append(round(kth_model.ObjNVal))
@@ -131,13 +131,13 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _hypervolume_of_projection(self, k, u):
         h = 1
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             if i != k:
                 h = h * (u[i] - self._ideal_point[i])
         return h
 
     def _next_k_u(self, U):
-        ku_pairs = list(itertools.product(range(self._model.NumObj), U))
+        ku_pairs = list(itertools.product(range(self._num_obj), U))
         h_values = [ self._hypervolume_of_projection(k,u) for k,u in ku_pairs ]
         max_h = max(h_values)
         return ku_pairs[h_values.index(max_h)]
@@ -170,7 +170,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                     self._set_start_values(model, feasible_variables)
 
     def _set_other_objectives_as_constraints(self, model, k, u, strict_inequality=True):
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             if i != k:
                 other_objective = self._model.getObjective(i)
                 new_expression = self._new_expression_from_objective(model, other_objective)
@@ -188,7 +188,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _summed_expression_from_objectives(self, model, weights):
         coefficient_dict = {}
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             objective = self._model.getObjective(i)
             for j in range(objective.size()):
                 var = objective.getVar(j)
@@ -204,7 +204,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
 
     def _upper_bounds_from_solved_model(self, model):
         upper_bounds = []
-        for i in range(self._model.NumObj):
+        for i in range(self._num_obj):
             upper_bounds.append(self._eval_objective_given_model(model, self._model.getObjective(i)))
         return tuple(upper_bounds)
 
@@ -213,7 +213,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         self._call_solver(subproblem)
         new_point = tuple(
             [self._eval_objective_given_model(subproblem, self._model.getObjective(i))
-             for i in range(self._model.NumObj)]
+             for i in range(self._num_obj)]
         )
         decision_variables = self._var_values_by_name_dict(subproblem)
         return (new_point, decision_variables)
@@ -230,9 +230,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         # Line 1
         N = set()
         U = set()
-        U.add( tuple([self._M] * self._model.NumObj) )
+        U.add( tuple([self._M] * self._num_obj) )
         V = {}
-        for k in range(self._model.NumObj):
+        for k in range(self._num_obj):
             V[k] = set()
 
         # Line 2
@@ -260,7 +260,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
             # Line 10
             for u_dash in U.copy():
                 # Line 11
-                for k in range(self._model.NumObj):
+                for k in range(self._num_obj):
                     # Line 12
                     if u_dash[k] == self._ideal_point[k]:
                         # Line 13

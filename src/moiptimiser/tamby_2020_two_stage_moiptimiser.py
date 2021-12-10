@@ -17,7 +17,7 @@ class Tamby2020TwoStageMOIPtimiser(Tamby2020MOIPtimiser):
         self._set_other_objectives_as_constraints(stage2_model, k, upper_bounds, strict_inequality=False)
         new_expression = self._new_expression_from_objective(self._model, self._model.getObjective(k))
         stage2_model.addLConstr(new_expression, GRB.EQUAL, round(stage1_model.ObjNVal))
-        weights = [1] * self._model.NumObj
+        weights = [1] * self._num_obj
         summed_expression = self._summed_expression_from_objectives(stage2_model, weights)
         stage2_model.setObjective(summed_expression)
         self._set_start_values(stage2_model, self._var_values_by_name_dict(stage1_model))
