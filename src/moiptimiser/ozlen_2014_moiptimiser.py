@@ -4,102 +4,45 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
 
     def __init__(self, model):
         super().__init__(model)
-        self._set_sense()
-        self._init_bound_constraints()
-        self._relaxation_cache = {}
+        self._convert_to_min_problem()
 
-    def _set_sense(self):
-        self._is_min = self._model.ModelSense == GRB.MINIMIZE
-        self._is_max = not self._is_min
-
-    def _init_bound_constraints(self):
-        self._objective_constraints = []
+    def _nondominated_vector_for(self, bounds):
+        model = self._new_empty_objective_model()
+        constraints = self._set_other_objectives_as_constraints(model, 0, prepend_tuple(self._M, bounds), strict_inequality=False)
         for i in range(self._num_obj):
-            objective = self._model.getObjective(i)
-            if self._is_min:
-                constraint = self._model.addLConstr(objective, '<', GRB.INFINITY)
-            else:
-                constraint = self._model.addLConstr(objective, '>', -GRB.INFINITY)
-            self._objective_constraints.append(constraint)
+            if i > 0:
+                model.remove(constraints[i-1])
+            self._copy_objective_to(self._model, model, i, 0)
+            self._call_solver(model)
+            if self._is_infeasible(model):
+                return None
+            upper_bound = round(self._eval_objective_given_model(model, self._model.getObjective(i)))
+            new_expression = self._new_expression_from_objective(self._model, self._model.getObjective(i))
+            model.addLConstr(new_expression, GRB.EQUAL, upper_bound)
+        vector = [ self._eval_objective_given_model(model, self._model.getObjective(i))
+                   for i in range(self._num_obj) ]
+        return tuple(vector)
 
-    def _current_nd(self):
-        nd = []
-        for i in range(self._num_obj):
-            self._model.params.ObjNumber = i
-            nd.append(round(self._model.ObjNVal))
-        return tuple(nd)
 
-    def _current_bounds(self):
-        bounds = []
-        for i in range(self._num_obj):
-            bounds.append(self._objective_constraints[i].rhs)
-        return tuple(bounds)
+    def _find_non_dominated_objective_vectors(self, q, bounds=()):
 
-    def _store_relaxation_in_cache(self, depth, bounds, solutions):
-        if depth not in self._relaxation_cache:
-            self._relaxation_cache[depth] = {}
-        self._relaxation_cache[depth][bounds] = solutions
-
-    # True if each left[i] >= right[i]
-    def _all_ge(self, left, right):
-        return all((x >= y for x, y in zip(left, right)))
-
-    # True if each left[i] <= right[i]
-    def _all_le(self, left, right):
-        return all((x <= y for x, y in zip(left, right)))
-
-    # True if left is relaxation of the right
-    def _is_relaxation(self, left, right):
-        if self._is_min:
-            return right != left and self._all_ge(left, right)
-        else:
-            return right != left and self._all_le(left, right)
-
-    def _are_feasible_vectors_at_depth(self, bounds, vectors, depth):
-        for solution in vectors:
-            if self._is_min and not self._all_ge(bounds[depth:], solution[depth:]):
-                return False
-            if self._is_max and not self._all_le(bounds[depth:], solution[depth:]):
-                return False
-        return True
-
-    def _find_feasible_relaxation(self, depth):
-        relaxations_at_depth = self._relaxation_cache.get(depth)
-        if relaxations_at_depth is not None:
-            bounds = self._current_bounds()
-            for other_bounds in relaxations_at_depth:
-                if self._is_relaxation(other_bounds, bounds[depth:]):
-                    nds = relaxations_at_depth[other_bounds]
-                    if self._are_feasible_vectors_at_depth(bounds, nds, depth):
-                        return nds
-
-    def _find_non_dominated_objective_vectors(self, depth):
-        relaxation = self._find_feasible_relaxation(depth)
-        if relaxation is not None:
-            return relaxation
-
-        elif depth == 1:
-            self._call_solver(self._model)
-            nds = set() if self._is_infeasible() else {self._current_nd()}
-            self._store_relaxation_in_cache(depth, self._current_bounds()[depth:], nds)
-            return nds
+        if q == 1:
+            new_vector = self._nondominated_vector_for(bounds)
+            N = new_vector and {new_vector} # Returns None if it was infeasible
+            return N
 
         else:
-            nds = set()
-            new_bound = GRB.INFINITY if self._is_min else -GRB.INFINITY
+            N = set()
+            upper_bound = self._M
             while True:
-                self._objective_constraints[depth-1].rhs = new_bound
-                self._model.update()
-                new_nds = self._find_non_dominated_objective_vectors(depth-1)
-                if len(new_nds) == 0:
-                    self._store_relaxation_in_cache(depth, self._current_bounds()[depth:], nds)
-                    return nds
-                nds = nds.union(new_nds)
-                if self._is_min:
-                    new_bound = max([nd[depth-1] for nd in new_nds]) - 1
-                else:
-                    new_bound = min([nd[depth-1] for nd in new_nds]) + 1
+                new_bounds = prepend_tuple(upper_bound, bounds)
+                new_vectors = self._find_non_dominated_objective_vectors(q-1, new_bounds)
+                if new_vectors is None or len(new_vectors) == 0:
+                    return N
+                N = N.union(new_vectors)
+                upper_bound = max([vector[q-1] for vector in new_vectors]) - 1
+
 
     def find_non_dominated_objective_vectors(self):
-        nds = self._find_non_dominated_objective_vectors(self._num_obj)
-        return nds
+        N = self._find_non_dominated_objective_vectors(self._num_obj)
+        return self._correct_sign_for_solutions(N)

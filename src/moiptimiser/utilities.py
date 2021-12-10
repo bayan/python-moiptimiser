@@ -2,6 +2,11 @@ from gurobipy import GRB
 
 import pprint
 
+def prepend_tuple(first, rest):
+    values = list(rest)
+    values.insert(0, first)
+    return tuple(values)
+
 def print_model(model):
     OutputFlag = model.Params.OutputFlag
     model.Params.OutputFlag = 1

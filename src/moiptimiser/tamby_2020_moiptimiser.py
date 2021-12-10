@@ -8,11 +8,7 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         self._convert_to_min_problem()
         self._defining_points = dict()
         self._decision_variable_map = dict()
-        self._init_M()
         self._init_ideal_point()
-
-    def _init_M(self):
-        self._M = GRB.MAXINT
 
     def _kth_projection(self, point, k):
         return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
@@ -76,45 +72,9 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                             self._defining_points[(k,u)].add(new_point)
         return new_search_region
 
-    def _copy_vars_to(self, source, target):
-        for var in source.getVars():
-            target.addVar(lb=var.lb, ub=var.ub, obj=var.obj,
-                          vtype=var.vtype, name=var.VarName)
-        target.update()
-
-    def _copy_objective_to(self, source, target, sourceN, targetN):
-        source_objective = source.getObjective(sourceN)
-        target_objective = gp.LinExpr()
-        for i in range(source_objective.size()):
-            var = source_objective.getVar(i)
-            coeff = source_objective.getCoeff(i)
-            new_var = target.getVarByName(var.VarName)
-            target_objective.add(new_var, coeff)
-        target.setObjectiveN(target_objective, targetN)
-        target.update()
-
-    def _copy_constraints_to(self, source, target):
-        for constr in source.getConstrs():
-            constraint_expression = source.getRow(constr)
-            new_expression = gp.LinExpr()
-            for i in range(constraint_expression.size()):
-                var = constraint_expression.getVar(i)
-                coeff = constraint_expression.getCoeff(i)
-                new_var = target.getVarByName(var.VarName)
-                new_expression.add(new_var, coeff)
-            target.addLConstr(new_expression, constr.Sense, constr.RHS, name=constr.ConstrName)
-        target.update()
-
     def _set_start_values(self, model, values):
         for varname in values:
             model.getVarByName(varname).setAttr(GRB.Attr.Start, values[varname])
-
-    def _new_empty_objective_model(self):
-        new_model = gp.Model()
-        new_model.Params.OutputFlag = 0  # Suppress console output
-        self._copy_vars_to(self._model, new_model)
-        self._copy_constraints_to(self._model, new_model)
-        return new_model
 
     def _kth_obj_model(self, k):
         new_model = self._new_empty_objective_model()
@@ -142,24 +102,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
         max_h = max(h_values)
         return ku_pairs[h_values.index(max_h)]
 
-    def _var_values_by_name_dict(self, model):
-        vals_by_name = {}
-        for var in model.getVars():
-            vals_by_name[var.VarName] = var.X
-        return vals_by_name
-
-    def _eval_linexpr_for_values(self, expression, vals_by_name):
-        total = 0
-        for i in range(expression.size()):
-            var = expression.getVar(i)
-            coeff = expression.getCoeff(i)
-            value = vals_by_name[var.VarName]
-            total = total + coeff * value
-        return round(total)
-
-    def _eval_objective_given_model(self, model, objective):
-        return self._eval_linexpr_for_values(objective, self._var_values_by_name_dict(model))
-
     def _find_and_set_start_values(self, model, k, u):
         if (k,u) in self._defining_points:
             N_ku = self._defining_points[(k,u)]
@@ -168,23 +110,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
                 if feasible_nd in self._decision_variable_map:
                     feasible_variables = self._decision_variable_map[feasible_nd]
                     self._set_start_values(model, feasible_variables)
-
-    def _set_other_objectives_as_constraints(self, model, k, u, strict_inequality=True):
-        for i in range(self._num_obj):
-            if i != k:
-                other_objective = self._model.getObjective(i)
-                new_expression = self._new_expression_from_objective(model, other_objective)
-                rhs = u[i] - 0.5 if strict_inequality else u[i]
-                model.addLConstr(new_expression, GRB.LESS_EQUAL, rhs)
-
-    def _new_expression_from_objective(self, model, objective):
-        new_expression = gp.LinExpr()
-        for j in range(objective.size()):
-            var = objective.getVar(j)
-            coeff = objective.getCoeff(j)
-            new_var = model.getVarByName(var.VarName)
-            new_expression.add(new_var, coeff)
-        return new_expression
 
     def _summed_expression_from_objectives(self, model, weights):
         coefficient_dict = {}
