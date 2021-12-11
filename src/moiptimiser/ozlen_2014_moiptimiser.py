@@ -6,7 +6,6 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         super().__init__(model)
         self._convert_to_min_problem()
         self._init_relaxation_cache()
-        self._nd_counter = 0
 
     def _init_relaxation_cache(self):
         self._relaxation_cache = {}
@@ -14,7 +13,6 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
             self._relaxation_cache[i+1] = {}
 
     def _nondominated_vector_for(self, bounds):
-        self._nd_counter = self._nd_counter + 1
         model = self._new_empty_objective_model()
         constraints = self._set_other_objectives_as_constraints(model, 0, prepend_tuple(self._M, bounds), strict_inequality=False)
         for i in range(self._num_obj):
