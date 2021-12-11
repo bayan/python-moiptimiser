@@ -37,6 +37,16 @@ class MOIPtimiser:
         else:
             self._converted_from_max_problem = False
 
+    def strictly_dominates(self, left, right):
+        return all((x < y for x, y in zip(left, right)))
+
+    def weakly_dominates(self, left, right):
+        return all((x <= y for x, y in zip(left, right)))
+
+    def dominates(self, left, right):
+        if left == right: return False
+        return self.weakly_dominates(left, right)
+
     def _correct_sign_for_solution(self, solution):
         if self._converted_from_max_problem:
             return tuple([-x for x in solution])

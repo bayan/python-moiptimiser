@@ -13,16 +13,6 @@ class Tamby2020MOIPtimiser(MOIPtimiser):
     def _kth_projection(self, point, k):
         return tuple(list(point[0:k]) + list(point[k+1:len(point)]))
 
-    def strictly_dominates(self, left, right):
-        return all((x < y for x, y in zip(left, right)))
-
-    def weakly_dominates(self, left, right):
-        return all((x <= y for x, y in zip(left, right)))
-
-    def dominates(self, left, right):
-        if left == right: return False
-        return self.weakly_dominates(left, right)
-
     # Algorithm 1
     def _update_search_region(self, new_point, search_region):
         # Output
