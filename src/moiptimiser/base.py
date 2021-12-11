@@ -70,7 +70,7 @@ class MOIPtimiser:
                           vtype=var.vtype, name=var.VarName)
         target.update()
 
-    def _copy_objective_to(self, source, target, sourceN, targetN):
+    def _copy_objective_to(self, source, target, sourceN, targetN, priority=0):
         source_objective = source.getObjective(sourceN)
         target_objective = gp.LinExpr()
         for i in range(source_objective.size()):
@@ -78,7 +78,7 @@ class MOIPtimiser:
             coeff = source_objective.getCoeff(i)
             new_var = target.getVarByName(var.VarName)
             target_objective.add(new_var, coeff)
-        target.setObjectiveN(target_objective, targetN)
+        target.setObjectiveN(target_objective, targetN, priority)
         target.update()
 
     def _copy_constraints_to(self, source, target):
