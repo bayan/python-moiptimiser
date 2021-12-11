@@ -6,23 +6,31 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         super().__init__(model)
         self._convert_to_min_problem()
         self._init_relaxation_cache()
+        self._setup_objectives_as_constraints()
 
     def _init_relaxation_cache(self):
         self._relaxation_cache = {}
         for i in range(self._num_obj):
             self._relaxation_cache[i+1] = {}
 
+    def _setup_objectives_as_constraints(self):
+        bounds = tuple([self._M]*self._num_obj)
+        self._objective_constraints = self._set_other_objectives_as_constraints(self._model, 0, bounds, strict_inequality=False)
+
     def _nondominated_vector_for(self, bounds):
-        model = self._new_empty_objective_model()
-        constraints = self._set_other_objectives_as_constraints(model, 0, prepend_tuple(self._M, bounds), strict_inequality=False)
-        for i in range(self._num_obj):
-            self._copy_objective_to(self._model, model, i, i, self._num_obj-i)
-        self._call_solver(model)
-        if self._is_infeasible(model):
+        for i in range(self._num_obj - 1):
+            self._objective_constraints[i].rhs = bounds[i]
+        self._call_solver(self._model)
+        if self._is_infeasible(self._model):
             return None
-        vector = [ self._eval_objective_given_model(model, self._model.getObjective(i))
-                   for i in range(self._num_obj) ]
-        return tuple(vector)
+        return self._current_nd()
+
+    def _current_nd(self):
+        nd = []
+        for i in range(self._num_obj):
+            self._model.params.ObjNumber = i
+            nd.append(round(self._model.ObjNVal))
+        return tuple(nd)
 
     # Returns a tuple (N, infeasible).
     # N is the set of nondominated vectors found, and is None if none were found.

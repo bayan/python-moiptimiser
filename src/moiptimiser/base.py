@@ -32,7 +32,7 @@ class MOIPtimiser:
             self._converted_from_max_problem = True
             self._model.ModelSense = GRB.MINIMIZE
             for i in range(self._num_obj):
-                self._model.setObjectiveN(-self._model.getObjective(i), i)
+                self._model.setObjectiveN(-self._model.getObjective(i), i, self._num_obj - i)
             self._model.update()
         else:
             self._converted_from_max_problem = False
