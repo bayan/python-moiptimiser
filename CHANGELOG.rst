@@ -80,3 +80,10 @@ Changelog
 -------------------
 
 * Documentation bug fix.
+
+
+0.0.12 (2021-12-14)
+-------------------
+
+* Refactored (Ozlen et al., 2014) to fix bugs, simplify the code and tweak the performance.
+* Changed CPU Time format in command line output
