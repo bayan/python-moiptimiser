@@ -17,13 +17,14 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         bounds = tuple([self._M]*self._num_obj)
         self._objective_constraints = self._set_other_objectives_as_constraints(self._model, 0, bounds, strict_inequality=False)
 
+    # Returns a tuple (N, infeasible).
     def _nondominated_vector_for(self, bounds):
         for i in range(self._num_obj - 1):
             self._objective_constraints[i].rhs = bounds[i]
         self._call_solver(self._model)
         if self._is_infeasible(self._model):
-            return None
-        return self._current_nd()
+            return (None, True)
+        return (self._current_nd(), False)
 
     def _current_nd(self):
         nd = []
@@ -49,24 +50,27 @@ class Ozlen2014MOIPtimiser(MOIPtimiser):
         self._relaxation_cache[q][bounds] = N
 
     def _find_non_dominated_objective_vectors(self, q, bounds=()):
-        N, infeasible = self._find_relaxation(q, bounds)
-        if infeasible: return None
-        if N is not None: return N
-
         if q == 1:
-            new_vector = self._nondominated_vector_for(bounds)
-            N = new_vector and {new_vector} # Returns None if it was infeasible
-            return N
+            new_vector, infeasible = self._nondominated_vector_for(bounds)
+            if infeasible: return None
+            return { new_vector } # Return the vector within a set
 
         else:
             N = set()
             upper_bound = self._M
             while True:
                 new_bounds = prepend_tuple(upper_bound, bounds)
-                new_vectors = self._find_non_dominated_objective_vectors(q-1, new_bounds)
-                self._save_relaxation(q-1, new_bounds, new_vectors)
+                new_vectors, infeasible = self._find_relaxation(q-1, new_bounds)
+                if infeasible:
+                    return None if len(N) == 0 else N
+                elif new_vectors is None:
+                    new_vectors = self._find_non_dominated_objective_vectors(q-1, new_bounds)
+                    self._save_relaxation(q-1, new_bounds, new_vectors)
+
+                # At this point, we have looked up the relaxation cache and called the solver.
                 if new_vectors is None:
                     return None if len(N) == 0 else N
+
                 N = N.union(new_vectors)
                 upper_bound = max([vector[q-1] for vector in new_vectors]) - 1
 
